@@ -116,20 +116,24 @@ button:disabled{background:#2a3a50;color:#6a82a0;cursor:not-allowed;box-shadow:n
      <div class="stat">📈 Progress: <span id="percent">0%</span></div>
    </div>
    <div class="progress"><div id="progressBar"></div></div>
+   
+   <div id="mainCertContainer" style="display:none; text-align:center; width:100%; margin-top:20px;">
+      <button class="answer correct" onclick="openCertModal()" style="font-size:1.2rem; padding:16px 24px; box-shadow: 0 4px 15px rgba(91,214,154,0.3); border:2px solid var(--good); width:100%;">🏆 All Missions Complete! Open Certificate</button>
+   </div>
  </div>
  <div style="text-align: center; width: 100%; margin-top: 10px;">
-   <img src="LJ.jpg" alt="Learning Journey Pathway" style="max-width: 100%; border-radius: 16px; border: 2px solid #49617e; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+   <img src="image_ba9929.jpg" alt="Learning Journey Pathway" style="max-width: 100%; border-radius: 16px; border: 2px solid #49617e; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
  </div>
 </section>
 
 <div class="section-title"><div><h2>Choose your mission</h2><p>Missions unlock automatically as you progress.</p></div><span class="pill">6 missions • 60-minute lesson</span></div>
 <section class="missions" id="missionGrid">
  <article class="mission"><div class="emoji">🦷</div><h3>1. Super Smile</h3><p>Test your knowledge of teeth, brushing and bacteria.</p><div class="meta"><span>5–8 mins</span><span id="status0">Not started</span></div><button id="btnM0" onclick="openMission(0)">Start mission →</button></article>
- <article class="mission"><div class="emoji">💉</div><h3>2. Vaccine Detectives</h3><p>Explore the school vaccination information in the lesson.</p><div class="meta"><span>8 mins</span><span id="status1">Not started</span></div><button id="btnM1" onclick="openMission(1)">Start mission →</button></article>
- <article class="mission"><div class="emoji">🦠</div><h3>3. Stop the Germs</h3><p>Think about how communicable diseases spread and how to reduce risk.</p><div class="meta"><span>8–10 mins</span><span id="status2">Not started</span></div><button id="btnM2" onclick="openMission(2)">Start mission →</button></article>
- <article class="mission"><div class="emoji">🏃</div><h3>4. Fitness Factory</h3><p>Sort activities and create a plan for an active week.</p><div class="meta"><span>10–12 mins</span><span id="status3">Not started</span></div><button id="btnM3" onclick="openMission(3)">Start mission →</button></article>
- <article class="mission"><div class="emoji">🧠</div><h3>5. Healthy Choices</h3><p>Make decisions in everyday health and wellbeing scenarios.</p><div class="meta"><span>8–10 mins</span><span id="status4">Not started</span></div><button id="btnM4" onclick="openMission(4)">Start mission →</button></article>
- <article class="mission"><div class="emoji">🏆</div><h3>6. Demonstrate</h3><p>Show what you have learned and copy your result.</p><div class="meta"><span>5–7 mins</span><span id="status5">Not started</span></div><button id="btnM5" onclick="openMission(5)">Start mission →</button></article>
+ <article class="mission"><div class="emoji">💉</div><h3>2. Vaccine Detectives</h3><p>Explore the school vaccination information in the lesson.</p><div class="meta"><span>8 mins</span><span id="status1">Not started</span></div><button id="btnM1" onclick="openMission(1)" disabled>🔒 Locked</button></article>
+ <article class="mission"><div class="emoji">🦠</div><h3>3. Stop the Germs</h3><p>Think about how communicable diseases spread and how to reduce risk.</p><div class="meta"><span>8–10 mins</span><span id="status2">Not started</span></div><button id="btnM2" onclick="openMission(2)" disabled>🔒 Locked</button></article>
+ <article class="mission"><div class="emoji">🏃</div><h3>4. Fitness Factory</h3><p>Sort activities and create a plan for an active week.</p><div class="meta"><span>10–12 mins</span><span id="status3">Not started</span></div><button id="btnM3" onclick="openMission(3)" disabled>🔒 Locked</button></article>
+ <article class="mission"><div class="emoji">🧠</div><h3>5. Healthy Choices</h3><p>Make decisions in everyday health and wellbeing scenarios.</p><div class="meta"><span>8–10 mins</span><span id="status4">Not started</span></div><button id="btnM4" onclick="openMission(4)" disabled>🔒 Locked</button></article>
+ <article class="mission"><div class="emoji">🏆</div><h3>6. Demonstrate</h3><p>Show what you have learned and copy your result.</p><div class="meta"><span>5–7 mins</span><span id="status5">Not started</span></div><button id="btnM5" onclick="openMission(5)" disabled>🔒 Locked</button></article>
 </section>
 
 <section class="activity" id="activity">
@@ -161,7 +165,20 @@ const $=id=>document.getElementById(id);
 let score=Number(localStorage.getItem('hh_score')||0);
 let completed=JSON.parse(localStorage.getItem('hh_done')||'[false,false,false,false,false,false]');
 let teacher=false, current=-1;
-let finalResponses = []; // Store responses for the notebook
+
+// Global state for saving answers locally
+let state = JSON.parse(localStorage.getItem('hh_state')) || { 
+    m0: [], 
+    m1: -1, 
+    m2: [], 
+    m3: { bins: null, plan: [] }, 
+    m4: [], 
+    m5: [] 
+};
+
+function saveState() { 
+    localStorage.setItem('hh_state', JSON.stringify(state)); 
+}
 
 const missionInfo=[
  ['Super Smile Challenge','Can you become a tooth expert? Answer all five questions. Choose an answer and read the feedback.'],
@@ -193,20 +210,21 @@ const finalQs=[
 ];
 
 function save(){localStorage.setItem('hh_score',score);localStorage.setItem('hh_done',JSON.stringify(completed));updateStats()}
+
 function updateStats(){
-  let n=completed.filter(Boolean).length; 
-  $('score').textContent=score;
-  $('completed').textContent=n+'/6';
-  $('percent').textContent=Math.round(n/6*100)+'%';
-  $('progressBar').style.width=(n/6*100)+'%';
+  let n = completed.filter(Boolean).length; 
+  $('score').textContent = score;
+  $('completed').textContent = n + '/6';
+  $('percent').textContent = Math.round(n / 6 * 100) + '%';
+  $('progressBar').style.width = (n / 6 * 100) + '%';
   
-  // Handle sequential unlocking
-  completed.forEach((v,i)=>{
-    $('status'+i).textContent=v?'✓ Completed':'Not started';
-    $('status'+i).className=v?'done':'';
+  // Sequential Unlocking logic
+  completed.forEach((v, i) => {
+    $('status' + i).textContent = v ? '✓ Completed' : 'Not started';
+    $('status' + i).className = v ? 'done' : '';
     
-    let btn = $('btnM'+i);
-    // Unlocked if it's the first mission, OR the previous is done, OR this one is already done
+    let btn = $('btnM' + i);
+    // Unlocked if: it's the 1st mission, OR previous mission is complete, OR this mission is already complete
     if (i === 0 || completed[i-1] || v) {
         btn.disabled = false;
         btn.textContent = v ? 'Review mission →' : 'Start mission →';
@@ -215,6 +233,13 @@ function updateStats(){
         btn.textContent = '🔒 Locked';
     }
   });
+
+  // Main Page Certificate Button display
+  if(completed.every(Boolean)) {
+      $('mainCertContainer').style.display = 'block';
+  } else {
+      $('mainCertContainer').style.display = 'none';
+  }
 }
 
 function award(id,points=10){let key='hh_award_'+id;if(!localStorage.getItem(key)){score+=points;localStorage.setItem(key,'1');save();}}
@@ -224,77 +249,96 @@ function closeMission(){$('activity').classList.remove('active')}
 
 function renderMission(i){
   let c=$('activityContent');
-  if(i===0)renderQuiz(dental,'dental');
+  if(i===0)renderQuiz(dental,'dental','m0');
   if(i===1)renderVaccines();
   if(i===2)renderGerms();
   if(i===3)renderFitness();
   if(i===4)renderChoices();
-  if(i===5)renderQuiz(finalQs,'final');
+  if(i===5)renderQuiz(finalQs,'final','m5');
   renderTeacher();
 }
 
-function renderQuiz(qs,key){
+function renderQuiz(qs, key, stateKey){
   let c=$('activityContent');
   c.innerHTML='';
-  let answered=0,correct=0;
+  let answered=0, correct=0;
   
-  if (key === 'final') finalResponses = []; // Reset responses for final quiz
-  
-  qs.forEach((q,qi)=>{
-    let box=document.createElement('div');
-    box.className='question';
-    box.innerHTML='<h3>Question '+(qi+1)+' of '+qs.length+'</h3><p>'+q[0]+'</p><div class="answers"></div><div class="feedback" id="'+key+'fb'+qi+'"></div>';
-    let ans=box.querySelector('.answers');
+  qs.forEach((q, qi) => {
+    let box = document.createElement('div');
+    box.className = 'question';
+    box.innerHTML = '<h3>Question '+(qi+1)+' of '+qs.length+'</h3><p>'+q[0]+'</p><div class="answers"></div><div class="feedback" id="'+key+'fb'+qi+'"></div>';
+    let ans = box.querySelector('.answers');
     
-    q[1].forEach((a,ai)=>{
-      let b=document.createElement('button');
-      b.className='answer';
-      b.textContent=String.fromCharCode(65+ai)+'. '+a;
-      b.onclick=()=>{
-        if(box.dataset.answered)return;
-        box.dataset.answered='1';
+    let prevAns = state[stateKey][qi];
+
+    q[1].forEach((a, ai) => {
+      let b = document.createElement('button');
+      b.className = 'answer';
+      b.textContent = String.fromCharCode(65+ai)+'. '+a;
+
+      // Restore previously saved answer
+      if (prevAns === ai) {
+          box.dataset.answered = '1';
+          answered++;
+          let ok = (ai === q[2]);
+          if(ok) {
+              correct++;
+              b.classList.add('correct');
+          } else {
+              b.classList.add('wrong');
+              // Highlight the correct one too
+              setTimeout(() => { ans.children[q[2]].classList.add('correct'); }, 0);
+          }
+          let fb = $(key+'fb'+qi);
+          fb.textContent = (ok ? 'Correct! ' : 'Not quite. ') + q[3];
+          fb.classList.add('show');
+      }
+
+      b.onclick = () => {
+        if(box.dataset.answered) return;
+        box.dataset.answered = '1';
         answered++;
-        let ok=ai===q[2];
         
-        if (key === 'final') {
-            finalResponses[qi] = {
-                question: q[0],
-                selected: a,
-                correct: ok,
-                correctAnswer: q[1][q[2]]
-            };
-        }
-        
+        // Save answer state locally
+        state[stateKey][qi] = ai;
+        saveState();
+
+        let ok = (ai === q[2]);
         if(ok){
           correct++;
           b.classList.add('correct');
-          award(key+'_'+qi,10);
-        }else{
+          award(key+'_'+qi, 10);
+        } else {
           b.classList.add('wrong');
           ans.children[q[2]].classList.add('correct');
         }
         
-        let fb=$(key+'fb'+qi);
-        fb.textContent=(ok?'Correct! ':'Not quite. ')+q[3];
+        let fb = $(key+'fb'+qi);
+        fb.textContent = (ok ? 'Correct! ' : 'Not quite. ') + q[3];
         fb.classList.add('show');
         
-        if(answered===qs.length){
-          let result=document.createElement('div');
-          result.className='callout';
-          result.innerHTML=`<strong>Challenge complete: ${correct}/${qs.length} correct.</strong> ` + (correct===qs.length?'Perfect score!':'Review the explanations, then discuss any tricky questions.');
-          
-          if (key === 'final') {
-              result.innerHTML += `<div style="margin-top:16px;"><button onclick="openCertModal()">🏆 Open Certificate & Export</button></div>`;
-          }
-          
-          c.appendChild(result);
-          markDone(current);
-        }
+        checkQuizCompletion();
       };
       ans.appendChild(b);
     });
     c.appendChild(box);
   });
+
+  checkQuizCompletion();
+
+  function checkQuizCompletion() {
+      if(answered === qs.length && !c.querySelector('.callout')) {
+          let result = document.createElement('div');
+          result.className = 'callout';
+          result.innerHTML = `<strong>Challenge complete: ${correct}/${qs.length} correct.</strong> ` + (correct === qs.length ? 'Perfect score!' : 'Review the explanations, then discuss any tricky questions.');
+          
+          if (key === 'final') {
+              result.innerHTML += `<div style="margin-top:16px;"><button onclick="openCertModal()">🏆 Open Certificate & Export</button></div>`;
+          }
+          c.appendChild(result);
+          markDone(current);
+      }
+  }
 }
 
 // Certificate / Notebook Export Logic
@@ -311,7 +355,23 @@ function updateNotebookText() {
     let n = completed.filter(Boolean).length;
     let dateStr = new Date().toLocaleDateString('en-GB');
     
-    let correctCount = finalResponses.filter(r => r && r.correct).length;
+    let correctCount = 0;
+    let detailsText = "";
+
+    finalQs.forEach((q, idx) => {
+        let ansIdx = state.m5[idx];
+        if (ansIdx !== undefined && ansIdx !== null) {
+            let isCorrect = (ansIdx === q[2]);
+            if (isCorrect) correctCount++;
+            
+            detailsText += "Q" + (idx + 1) + ": " + q[0] + "\n";
+            detailsText += "Your Answer: " + q[1][ansIdx] + (isCorrect ? " (✅ Correct)" : " (❌ Incorrect)") + "\n";
+            if (!isCorrect) {
+                detailsText += "Correct Answer: " + q[1][q[2]] + "\n";
+            }
+            detailsText += "\n";
+        }
+    });
 
     let txt = "========================================\n" +
               "🏆 HEALTH HEROES RESULTS 🏆\n" +
@@ -322,17 +382,8 @@ function updateNotebookText() {
               "Missions Completed: " + n + "/6\n" +
               "Demonstrate Quiz Score: " + correctCount + "/" + finalQs.length + "\n" +
               "========================================\n\n" +
-              "--- DEMONSTRATE TASK ---\n\n";
+              "--- DEMONSTRATE TASK ---\n\n" + detailsText;
               
-    finalResponses.forEach((r, idx) => {
-        if (!r) return;
-        txt += "Q" + (idx + 1) + ": " + r.question + "\n";
-        txt += "Your Answer: " + r.selected + (r.correct ? " (✅ Correct)" : " (❌ Incorrect)") + "\n";
-        if (!r.correct) {
-            txt += "Correct Answer: " + r.correctAnswer + "\n";
-        }
-        txt += "\n";
-    });
     textArea.value = txt;
 }
 $('pupilName').addEventListener('input', updateNotebookText);
@@ -347,7 +398,9 @@ window.copyNotebook = function() {
     });
 }
 
-function renderVaccines(){let c=$('activityContent');c.innerHTML=`
+function renderVaccines(){
+ let c=$('activityContent');
+ c.innerHTML=`
  <div class="callout"><strong>Source check:</strong> The following year-group information is reproduced from the supplied PowerPoint (labelled National Public Health Vaccines 2026/27). Please check the current school/NHS vaccination schedule before teaching or distributing this information.</div>
  <div class="sort-grid">
   <div class="question"><h3>Year 7</h3><div style="font-size:2rem">💨</div><strong>Flu (Influenza)</strong><p>Source slide: nasal spray delivered in school each autumn (Year 7–Year 11).</p><p>Reason given: protection against serious illness and helping stop the virus spreading to vulnerable people.</p></div>
@@ -356,36 +409,83 @@ function renderVaccines(){let c=$('activityContent');c.innerHTML=`
  </div>
  <div class="question"><h3>Quick check: Which vaccination does the source presentation list for Year 8?</h3><div class="answers" id="vaxAnswers"></div><div class="feedback" id="vaxFb"></div></div>
  <div class="actions"><button onclick="markDone(1);award('vax_complete',10);this.textContent='✓ Mission completed'">Complete investigation (+10 points)</button></div>`;
- let opts=['Flu only','HPV','SLB 3-in-1'];opts.forEach((o,i)=>{let b=document.createElement('button');b.className='answer';b.textContent=o;b.onclick=()=>{let f=$('vaxFb');f.textContent=i===1?'Correct! The source presentation lists HPV for Year 8.':'Check the Year 8 panel: it lists HPV.';f.classList.add('show');if(i===1){b.classList.add('correct');award('vax_q',10)}else b.classList.add('wrong')};$('vaxAnswers').appendChild(b)})}
+ 
+ let opts=['Flu only','HPV','SLB 3-in-1'];
+ opts.forEach((o,i) => {
+    let b = document.createElement('button');
+    b.className = 'answer';
+    b.textContent = o;
+    
+    if (state.m1 === i) {
+        let f = $('vaxFb');
+        f.textContent = i === 1 ? 'Correct! The source presentation lists HPV for Year 8.' : 'Check the Year 8 panel: it lists HPV.';
+        f.classList.add('show');
+        b.classList.add(i === 1 ? 'correct' : 'wrong');
+    }
 
-function renderGerms(){let c=$('activityContent');c.innerHTML=`
+    b.onclick = () => {
+        state.m1 = i;
+        saveState();
+        let f=$('vaxFb');
+        f.textContent = i === 1 ? 'Correct! The source presentation lists HPV for Year 8.' : 'Check the Year 8 panel: it lists HPV.';
+        f.classList.add('show');
+        if(i===1){ b.classList.add('correct'); award('vax_q',10); } 
+        else { b.classList.add('wrong'); }
+    };
+    $('vaxAnswers').appendChild(b);
+ });
+}
+
+function renderGerms(){
+ let c=$('activityContent');
+ c.innerHTML=`
  <div class="callout"><strong>Think, pair, share:</strong> Your PowerPoint asks: “What can you do at home and in school to protect yourself and others from communicable diseases?” Think of at least three ideas before revealing the suggestions.</div>
  <div class="question"><h3>Choose the actions that can help reduce the spread of germs.</h3><div id="germChoices" class="chips"></div><div class="actions"><button onclick="checkGerms()">Check my choices</button></div><div class="feedback" id="germFb"></div></div>
  <div class="question"><h3>Discuss the sneeze-distance video</h3><p>After watching the “Gross Science: How Far Do Sneezes and Vomit Travel?” clip from your PowerPoint, discuss:</p><ol><li>What surprised you?</li><li>How might germs travel from one person to another?</li><li>What could pupils do at home and at school to protect others?</li></ol></div>
  <div class="actions"><button onclick="markDone(2);award('germs_done',10);this.textContent='✓ Mission completed'">Complete mission (+10 points)</button></div>`;
- let items=['Wash hands with soap','Cover coughs and sneezes','Put used tissues in a bin','Share used tissues','Clean frequently touched surfaces','Ignore hand hygiene'];let right=[0,1,2,4];items.forEach((x,i)=>{let b=document.createElement('button');b.className='chip';b.textContent=x;b.dataset.i=i;b.onclick=()=>b.classList.toggle('selected');$('germChoices').appendChild(b)})}
-function checkGerms(){let chosen=[...document.querySelectorAll('#germChoices .selected')].map(x=>+x.dataset.i),right=[0,1,2,4];let ok=chosen.length===right.length&&right.every(x=>chosen.includes(x));$('germFb').textContent=ok?'Excellent! You selected all four helpful actions and avoided the unhelpful choices.':'Have another look. Select the helpful actions only: washing hands, covering coughs and sneezes, binning used tissues and cleaning frequently touched surfaces.';$('germFb').classList.add('show');if(ok)award('germ_sort',15)}
+ 
+ let items=['Wash hands with soap','Cover coughs and sneezes','Put used tissues in a bin','Share used tissues','Clean frequently touched surfaces','Ignore hand hygiene'];
+ items.forEach((x,i)=>{
+    let b = document.createElement('button');
+    b.className = 'chip';
+    b.textContent = x;
+    b.dataset.i = i;
+    
+    if(state.m2.includes(i)) b.classList.add('selected');
+    
+    b.onclick = () => {
+        b.classList.toggle('selected');
+        state.m2 = [...document.querySelectorAll('#germChoices .selected')].map(el => +el.dataset.i);
+        saveState();
+    };
+    $('germChoices').appendChild(b);
+ });
+}
+
+function checkGerms(){
+    let chosen = state.m2;
+    let right = [0,1,2,4];
+    let ok = (chosen.length === right.length && right.every(x => chosen.includes(x)));
+    
+    $('germFb').textContent = ok ? 'Excellent! You selected all four helpful actions and avoided the unhelpful choices.' : 'Have another look. Select the helpful actions only: washing hands, covering coughs and sneezes, binning used tissues and cleaning frequently touched surfaces.';
+    $('germFb').classList.add('show');
+    if(ok) award('germ_sort',15);
+}
 
 // ----------------- DRAG AND DROP FITNESS LOGIC ----------------- //
 const dragActivities = [
-    {id:'d1', name:'Walking', cat:'a'},
-    {id:'d2', name:'Walking the dog', cat:'a'},
-    {id:'d3', name:'Running', cat:'a'},
-    {id:'d4', name:'Swimming', cat:'a'},
-    {id:'d5', name:'Cycling', cat:'a'},
-    {id:'d6', name:'Dancing', cat:'a'},
-    {id:'d7', name:'Skipping', cat:'a'},
-    {id:'d8', name:'Tennis', cat:'a'},
-    {id:'d9', name:'PE', cat:'a'},
-    {id:'d10', name:'Gymnastics', cat:'s'},
-    {id:'d11', name:'Martial arts', cat:'s'},
-    {id:'d12', name:'Sit-ups', cat:'s'},
-    {id:'d13', name:'Press-ups', cat:'s'},
-    {id:'d14', name:'Football', cat:'a'}, // Aerobic duplicate
-    {id:'d15', name:'Football', cat:'s'}, // Strength duplicate
-    {id:'d16', name:'Jumping', cat:'a'},  // Aerobic duplicate
-    {id:'d17', name:'Jumping', cat:'s'}   // Strength duplicate
+    {id:'d1', name:'Walking'}, {id:'d2', name:'Walking the dog'}, {id:'d3', name:'Running'},
+    {id:'d4', name:'Swimming'}, {id:'d5', name:'Cycling'}, {id:'d6', name:'Dancing'},
+    {id:'d7', name:'Skipping'}, {id:'d8', name:'Tennis'}, {id:'d9', name:'PE'},
+    {id:'d10', name:'Gymnastics'}, {id:'d11', name:'Martial arts'}, {id:'d12', name:'Sit-ups'},
+    {id:'d13', name:'Press-ups'}, 
+    {id:'d14', name:'Football'}, {id:'d15', name:'Football'}, // Duplicate for both boxes
+    {id:'d16', name:'Jumping'}, {id:'d17', name:'Jumping'}    // Duplicate for both boxes
 ];
+
+// Names for accurate validation regardless of chip ID
+const aerobicNames = ['Walking','Walking the dog','Running','Swimming','Cycling','Dancing','Skipping','Football','Tennis','Jumping','PE'];
+const strengthNames = ['Gymnastics','Martial arts','Sit-ups','Press-ups','Football','Jumping'];
 
 function renderFitness(){
  let c=$('activityContent');
@@ -395,14 +495,14 @@ function renderFitness(){
     <em>Note: Football and Jumping appear twice because they belong in both boxes!</em><br>
     (Made a mistake? Click an item inside a box to throw it back here).
  </div>
- <div id="activityPool" class="chips" style="background:#101c2d; padding:16px; border-radius:12px; border:1px solid #3b506d; min-height:80px;" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+ <div id="activityPool" class="chips" style="background:#101c2d; padding:16px; border-radius:12px; border:1px solid #3b506d; min-height:80px;" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)"></div>
  
  <div class="sort-grid">
-    <div class="sort-bin" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <div class="sort-bin" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
         <h3>🏃 Aerobic</h3>
         <div id="aerobicBin" class="chips" style="min-height:120px;"></div>
     </div>
-    <div class="sort-bin" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <div class="sort-bin" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
         <h3>💪 Strengthening</h3>
         <div id="strengthBin" class="chips" style="min-height:120px;"></div>
     </div>
@@ -415,44 +515,74 @@ function renderFitness(){
  <div class="plan"><table><thead><tr><th>Day</th><th>Activity</th><th>Minutes</th></tr></thead><tbody id="weekRows"></tbody></table></div>
  <p><strong>Total planned minutes: <span id="totalMins">0</span></strong></p><div class="actions"><button onclick="savePlan()">Save my plan (+10 points)</button></div><div class="feedback" id="planFb"></div>`;
  
- // Shuffle function for the pool
- let shuffled = [...dragActivities].sort(() => Math.random() - 0.5);
+ // Restore Chips State
+ if (!state.m3.bins) {
+     let shuffled = [...dragActivities].sort(() => Math.random() - 0.5);
+     shuffled.forEach(a => $('activityPool').appendChild(createChip(a)));
+ } else {
+     state.m3.bins.pool.forEach(id => { let a=dragActivities.find(x=>x.id===id); if(a) $('activityPool').appendChild(createChip(a)); });
+     state.m3.bins.aerobic.forEach(id => { let a=dragActivities.find(x=>x.id===id); if(a) $('aerobicBin').appendChild(createChip(a)); });
+     state.m3.bins.strength.forEach(id => { let a=dragActivities.find(x=>x.id===id); if(a) $('strengthBin').appendChild(createChip(a)); });
+ }
  
- shuffled.forEach(a=>{
-    let b=document.createElement('div');
-    b.className='chip';
-    b.id=a.id;
-    b.textContent=a.name;
-    b.dataset.cat=a.cat;
-    b.draggable=true;
+ // Restore Planner State
+ const selectOptions = ['Walking','Walking the dog','Running','Swimming','Cycling','Dancing','Skipping','Football','Tennis','Gymnastics','Martial arts','Sit-ups','Press-ups','Jumping','PE'];
+ ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].forEach((d, i)=>{
+    let savedRow = state.m3.plan[i] || { act: '', mins: 0 };
+    let tr=document.createElement('tr');
+    tr.innerHTML='<td>'+d+'</td><td><select onchange="saveFitnessState()" aria-label="'+d+' activity"><option value="">Choose activity</option>'+selectOptions.map(a=>'<option '+(savedRow.act===a?'selected':'')+'>'+a+'</option>').join('')+'</select></td><td><input type="number" min="0" max="300" value="'+savedRow.mins+'" aria-label="'+d+' minutes" oninput="updateTotal(); saveFitnessState();"></td>';
+    $('weekRows').appendChild(tr);
+ });
+ updateTotal();
+}
+
+function createChip(a) {
+    let b = document.createElement('div');
+    b.className = 'chip';
+    b.id = a.id;
+    b.textContent = a.name;
+    b.draggable = true;
     b.ondragstart = (ev) => ev.dataTransfer.setData("text", ev.target.id);
     b.onclick = function() {
         if(this.parentElement.id !== 'activityPool') {
             $('activityPool').appendChild(this);
+            $('sortFeedback').textContent = ''; // clear feedback on modification
+            saveFitnessState();
         }
     };
-    $('activityPool').appendChild(b);
- });
- 
- const selectOptions = ['Walking','Walking the dog','Running','Swimming','Cycling','Dancing','Skipping','Football','Tennis','Gymnastics','Martial arts','Sit-ups','Press-ups','Jumping','PE'];
- ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].forEach(d=>{
-    let tr=document.createElement('tr');
-    tr.innerHTML='<td>'+d+'</td><td><select aria-label="'+d+' activity"><option value="">Choose activity</option>'+selectOptions.map(a=>'<option>'+a+'</option>').join('')+'</select></td><td><input type="number" min="0" max="300" value="0" aria-label="'+d+' minutes" oninput="updateTotal()"></td>';
-    $('weekRows').appendChild(tr);
- });
+    return b;
 }
 
-window.allowDrop = (ev) => {
-    ev.preventDefault();
-};
+function saveFitnessState() {
+   state.m3.bins = {
+      pool: [...$('activityPool').children].map(c=>c.id),
+      aerobic: [...$('aerobicBin').children].map(c=>c.id),
+      strength: [...$('strengthBin').children].map(c=>c.id)
+   };
+   state.m3.plan = [...document.querySelectorAll('#weekRows tr')].map(tr => ({
+      act: tr.querySelector('select').value,
+      mins: tr.querySelector('input').value
+   }));
+   saveState();
+}
 
+window.allowDrop = (ev) => ev.preventDefault();
+window.dragEnter = (ev) => {
+    let bin = ev.target.closest('.sort-bin');
+    if(bin) bin.classList.add('drag-over');
+};
+window.dragLeave = (ev) => {
+    let bin = ev.target.closest('.sort-bin');
+    if(bin && ev.target === bin) bin.classList.remove('drag-over');
+};
 window.drop = (ev) => {
     ev.preventDefault();
+    document.querySelectorAll('.sort-bin').forEach(bin => bin.classList.remove('drag-over'));
+    
     let data = ev.dataTransfer.getData("text");
     let el = document.getElementById(data);
     if (!el) return;
     
-    // Find the correct drop target (either the pool or the .chips container inside a bin)
     let dropZone;
     if (ev.target.id === 'activityPool' || ev.target.id === 'aerobicBin' || ev.target.id === 'strengthBin') {
         dropZone = ev.target;
@@ -460,22 +590,26 @@ window.drop = (ev) => {
         dropZone = ev.target.closest('.sort-bin').querySelector('.chips');
     }
     
-    if (dropZone) dropZone.appendChild(el);
+    if (dropZone) {
+        dropZone.appendChild(el);
+        $('sortFeedback').textContent = ''; // clear feedback on modification
+        saveFitnessState();
+    }
 };
 
 function checkSort(){
-    let aNodes = [...$('aerobicBin').querySelectorAll('.chip')];
-    let sNodes = [...$('strengthBin').querySelectorAll('.chip')];
     let poolNodes = [...$('activityPool').querySelectorAll('.chip')];
-    
     if(poolNodes.length > 0) {
         $('sortFeedback').textContent = 'Please sort all activities out of the starting box first!';
         return;
     }
     
+    let aNodes = [...$('aerobicBin').querySelectorAll('.chip')].map(x => x.textContent);
+    let sNodes = [...$('strengthBin').querySelectorAll('.chip')].map(x => x.textContent);
+    
     let ok = true;
-    aNodes.forEach(n => { if(n.dataset.cat !== 'a') ok = false; });
-    sNodes.forEach(n => { if(n.dataset.cat !== 's') ok = false; });
+    aNodes.forEach(n => { if(!aerobicNames.includes(n)) ok = false; });
+    sNodes.forEach(n => { if(!strengthNames.includes(n)) ok = false; });
     
     if(ok){
         $('sortFeedback').textContent = 'Great sorting! (+15 points)';
@@ -484,6 +618,7 @@ function checkSort(){
         $('sortFeedback').textContent = 'Some activities are in the wrong category. Click an item to remove it and try again!';
     }
 }
+
 function updateTotal(){let n=[...document.querySelectorAll('#weekRows input')].reduce((s,x)=>s+(+x.value||0),0);$('totalMins').textContent=n}
 function savePlan(){let rows=[...document.querySelectorAll('#weekRows tr')],filled=rows.some(r=>r.querySelector('select').value&&+r.querySelector('input').value>0);$('planFb').textContent=filled?'Plan saved on this device. Discuss whether it is balanced and realistic.':'Add at least one activity and a number of minutes first.';$('planFb').classList.add('show');if(filled){award('fitness_plan',10);markDone(3)}}
 
@@ -496,8 +631,52 @@ function renderChoices(){
  ['You feel tired during PE. What could you do?',['Keep it secret and push through anything','Tell your teacher and think about rest, hydration and routine','Stop being active forever'],1,'Tell a trusted adult or teacher if you feel unwell. Rest, hydration and a balanced routine matter.'],
  ['You want to become more active. What is a good starting point?',['Choose an activity you enjoy and build it into your week','Try to do everything at once','Only exercise once a year'],0,'A realistic plan built around activities you enjoy is easier to maintain.']
  ];
- data.forEach((q,i)=>{let d=document.createElement('div');d.className='scenario';d.innerHTML='<h3>Scenario '+(i+1)+'</h3><p>'+q[0]+'</p>';q[1].forEach((o,j)=>{let b=document.createElement('button');b.className='secondary';b.textContent=o;b.onclick=()=>{if(d.dataset.done)return;d.dataset.done='1';let r=d.querySelector('.response');r.textContent=(j===q[2]?'Good choice! ':'Think about this choice. ')+q[3];r.classList.add('show');if(j===q[2])award('scenario_'+i,10)};d.appendChild(b)});let r=document.createElement('div');r.className='response';d.appendChild(r);c.appendChild(d)});
- c.insertAdjacentHTML('beforeend','<div class="actions"><button onclick="markDone(4);award(\'choices_done\',10);this.textContent=\'✓ Mission completed\'">Complete mission (+10 points)</button></div>')}
+ 
+ data.forEach((q,i)=>{
+    let d=document.createElement('div');
+    d.className='scenario';
+    d.innerHTML='<h3>Scenario '+(i+1)+'</h3><p>'+q[0]+'</p>';
+    
+    let prevAns = state.m4[i];
+    
+    q[1].forEach((o,j)=>{
+        let b=document.createElement('button');
+        b.className='secondary';
+        b.textContent=o;
+        
+        if(prevAns === j) {
+            d.dataset.done = '1';
+        }
+        
+        b.onclick=()=>{
+            if(d.dataset.done) return;
+            d.dataset.done = '1';
+            
+            state.m4[i] = j; saveState();
+            
+            let r=d.querySelector('.response');
+            r.textContent=(j===q[2]?'Good choice! ':'Think about this choice. ')+q[3];
+            r.classList.add('show');
+            if(j===q[2]) award('scenario_'+i,10);
+            
+            checkScenariosCompletion();
+        };
+        d.appendChild(b);
+    });
+    
+    let r=document.createElement('div');
+    r.className='response';
+    if(prevAns !== undefined) {
+        r.textContent = (prevAns === q[2] ? 'Good choice! ' : 'Think about this choice. ') + q[3];
+        r.classList.add('show');
+    }
+    d.appendChild(r);
+    c.appendChild(d);
+ });
+ 
+ c.insertAdjacentHTML('beforeend','<div class="actions"><button onclick="markDone(4);award(\'choices_done\',10);this.textContent=\'✓ Mission completed\'">Complete mission (+10 points)</button></div>');
+}
+function checkScenariosCompletion() { /* purely for potential auto-completion */ }
 
 function renderTeacher(){
   let t=$('teacherContent');
@@ -515,7 +694,15 @@ function renderTeacher(){
 }
 
 $('teacherToggle').onclick=()=>{teacher=!teacher;$('teacherToggle').textContent=teacher?'👩‍🏫 Teacher mode: ON':'👩‍🏫 Teacher mode';$('teacherPanel').classList.toggle('show',teacher);if(current>=0)renderTeacher()};
-$('resetBtn').onclick=()=>{if(confirm('Reset all Health Heroes scores and mission progress on this device?')){score=0;completed=[false,false,false,false,false,false];Object.keys(localStorage).filter(k=>k.startsWith('hh_')).forEach(k=>localStorage.removeItem(k));save();if(current>=0)renderMission(current)}};
+$('resetBtn').onclick=()=>{if(confirm('Reset all Health Heroes scores and mission progress on this device?')){
+    score=0;
+    completed=[false,false,false,false,false,false];
+    state = { m0: [], m1: -1, m2: [], m3: { bins: null, plan: [] }, m4: [], m5: [] };
+    Object.keys(localStorage).filter(k=>k.startsWith('hh_')).forEach(k=>localStorage.removeItem(k));
+    save();
+    $('certModal').classList.remove('show');
+    if(current>=0) renderMission(current);
+}};
 
 updateStats();
 </script>

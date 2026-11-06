@@ -44,7 +44,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-
    <div class="progress"><div id="progressBar"></div></div>
  </div>
  <div style="text-align: center; width: 100%; margin-top: 10px;">
-   <img src="image_ba9929.jpg" alt="Learning Journey Pathway" style="max-width: 100%; border-radius: 16px; border: 2px solid #49617e; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+   <img src="LJ.jpg" alt="Learning Journey Pathway" style="max-width: 100%; border-radius: 16px; border: 2px solid #49617e; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
  </div>
 </section>
 
@@ -110,11 +110,14 @@ function renderQuiz(qs,key){
   let c=$('activityContent');
   c.innerHTML='';
   let answered=0,correct=0;
+  let responses = []; // Array to store pupil answers
+  
   qs.forEach((q,qi)=>{
     let box=document.createElement('div');
     box.className='question';
     box.innerHTML='<h3>Question '+(qi+1)+' of '+qs.length+'</h3><p>'+q[0]+'</p><div class="answers"></div><div class="feedback" id="'+key+'fb'+qi+'"></div>';
     let ans=box.querySelector('.answers');
+    
     q[1].forEach((a,ai)=>{
       let b=document.createElement('button');
       b.className='answer';
@@ -123,7 +126,17 @@ function renderQuiz(qs,key){
         if(box.dataset.answered)return;
         box.dataset.answered='1';
         answered++;
+        
         let ok=ai===q[2];
+        
+        // Record the response for the notebook export
+        responses[qi] = {
+            question: q[0],
+            selected: a,
+            correct: ok,
+            correctAnswer: q[1][q[2]]
+        };
+        
         if(ok){
           correct++;
           b.classList.add('correct');
@@ -132,9 +145,11 @@ function renderQuiz(qs,key){
           b.classList.add('wrong');
           ans.children[q[2]].classList.add('correct');
         }
+        
         let fb=$(key+'fb'+qi);
         fb.textContent=(ok?'Correct! ':'Not quite. ')+q[3];
         fb.classList.add('show');
+        
         if(answered===qs.length){
           let result=document.createElement('div');
           result.className='callout';
@@ -152,7 +167,7 @@ function renderQuiz(qs,key){
                 <h3 style="color:var(--lime); margin-top:0;">📓 Class Notebook Export</h3>
                 <p style="margin-bottom:14px;">Type your name below to generate your final summary, then click the button to copy it so you can paste it directly into your Class Notebook.</p>
                 <input type="text" id="pupilName" placeholder="Enter your name" style="margin-bottom:14px; padding:10px; width:100%; max-width:300px; border-radius:8px; border:1px solid #526783; background:#101c2d; color:white; font-size:1rem;">
-                <textarea id="notebookText" rows="7" style="width:100%; padding:14px; border-radius:8px; border:1px solid #526783; background:#101c2d; color:white; margin-bottom:14px; font-family:monospace; font-size:1rem; resize:none;" readonly></textarea>
+                <textarea id="notebookText" rows="12" style="width:100%; padding:14px; border-radius:8px; border:1px solid #526783; background:#101c2d; color:white; margin-bottom:14px; font-family:monospace; font-size:1rem; resize:vertical;" readonly></textarea>
                 <div>
                     <button onclick="copyNotebook()">📋 Copy to Clipboard</button>
                     <span id="copyMsg" style="margin-left:12px; color:var(--lime); display:none; font-weight:bold;">✓ Copied! Paste it now!</span>
@@ -162,25 +177,39 @@ function renderQuiz(qs,key){
 
             let nameInput = $('pupilName');
             let textArea = $('notebookText');
+            
             function updateText() {
                 let n = completed.filter(Boolean).length;
                 let dateStr = new Date().toLocaleDateString('en-GB');
-                textArea.value = "========================================\n" +
-                                 "🏆 HEALTH HEROES CERTIFICATE 🏆\n" +
-                                 "========================================\n" +
-                                 "Date: " + dateStr + "\n" +
-                                 "Pupil: " + (nameInput.value || "[Type your name]") + "\n" +
-                                 "Final Score: " + score + " points\n" +
-                                 "Missions Completed: " + n + "/6\n" +
-                                 "Quiz Result: " + correct + "/" + qs.length + "\n" +
-                                 "========================================";
+                
+                let txt = "========================================\n" +
+                          "🏆 HEALTH HEROES RESULTS 🏆\n" +
+                          "========================================\n" +
+                          "Date: " + dateStr + "\n" +
+                          "Pupil: " + (nameInput.value || "[Type your name]") + "\n" +
+                          "Overall Score: " + score + " points\n" +
+                          "Missions Completed: " + n + "/6\n" +
+                          "Demonstrate Quiz Score: " + correct + "/" + qs.length + "\n" +
+                          "========================================\n\n" +
+                          "--- QUIZ DETAILS ---\n\n";
+                          
+                responses.forEach((r, idx) => {
+                    txt += "Q" + (idx + 1) + ": " + r.question + "\n";
+                    txt += "Your Answer: " + r.selected + (r.correct ? " (✅ Correct)" : " (❌ Incorrect)") + "\n";
+                    if (!r.correct) {
+                        txt += "Correct Answer: " + r.correctAnswer + "\n";
+                    }
+                    txt += "\n";
+                });
+
+                textArea.value = txt;
             }
             nameInput.addEventListener('input', updateText);
-            updateText(); // generate initial text
+            updateText(); // Generate initial text
 
             window.copyNotebook = function() {
                 textArea.select();
-                textArea.setSelectionRange(0, 99999);
+                textArea.setSelectionRange(0, 99999); // For mobile devices
                 navigator.clipboard.writeText(textArea.value).then(()=>{
                     $("copyMsg").style.display = "inline";
                     setTimeout(() => $("copyMsg").style.display = "none", 3000);
@@ -233,7 +262,7 @@ function updateTotal(){let n=[...document.querySelectorAll('#weekRows input')].r
 function savePlan(){let rows=[...document.querySelectorAll('#weekRows tr')],filled=rows.some(r=>r.querySelector('select').value&&+r.querySelector('input').value>0);$('planFb').textContent=filled?'Plan saved on this device. Discuss whether it is balanced and realistic.':'Add at least one activity and a number of minutes first.';$('planFb').classList.add('show');if(filled){award('fitness_plan',10);markDone(3)}}
 function renderChoices(){
  let c=$('activityContent');
- c.innerHTML = ''; // Fix: Clears content so previous mission activities don't get stuck above
+ c.innerHTML = '';
  let data=[
  ['You spend most of the evening gaming. What could help you balance your day?',['Never play games again','Plan breaks and make time for movement','Skip sleep to fit in exercise'],1,'A balanced routine can include enjoyable screen time, breaks, sleep and physical activity.'],
  ['You regularly skip breakfast and feel hungry in the morning. What is a sensible next step?',['Talk to a trusted adult about a breakfast routine','Ignore hunger every day','Only drink fizzy drinks'],0,'Planning a breakfast that works for you can help establish a regular routine.'],

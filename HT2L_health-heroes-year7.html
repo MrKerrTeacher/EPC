@@ -7,7 +7,81 @@
 <style>
 :root{--bg:#101827;--panel:#1b2940;--panel2:#243650;--ink:#f4f7fb;--muted:#b9c7d9;--lime:#a8e65b;--cyan:#62d8e8;--orange:#ffb454;--pink:#ff7f9e;--good:#5bd69a;--bad:#ff8291;--line:#3b506d}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 10% 0%,#203657 0,transparent 34%),var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:11px 16px;font-weight:750;background:var(--lime);color:#152019;transition:.15s}button:hover{filter:brightness(1.08);transform:translateY(-1px)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}.secondary{background:#344b69;color:white;border:1px solid #536987}.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}.danger{background:#6d3042;color:white}.wrap{max-width:1120px;margin:auto;padding:22px}.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}.brand{display:flex;gap:12px;align-items:center}.logo{border-radius:16px;padding:10px 14px;background:white;display:flex;align-items:center;justify-content:center}.eyebrow{color:var(--lime);font-size:.78rem;font-weight:850;letter-spacing:.14em;text-transform:uppercase}.brand h1{margin:0;font-size:clamp(1.35rem,3vw,2rem);line-height:1.15}.brand p{margin:3px 0;color:var(--muted);font-size:.9rem}.top-actions{display:flex;gap:8px;flex-wrap:wrap}.hero{margin:24px 0 18px;padding:26px;border-radius:24px;background:linear-gradient(120deg,#25425e,#293c59 58%,#3b3c63);border:1px solid #49617e;display:flex;flex-direction:column;gap:24px}.hero h2{font-size:clamp(1.8rem,4vw,3rem);line-height:1.05;margin:8px 0}.hero p{color:#d7e3f2;max-width:800px}.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.stat{background:#17263b;border:1px solid #4c6380;border-radius:12px;padding:8px 12px;font-weight:700}.stat span{color:var(--lime);font-variant-numeric:tabular-nums}.progress{height:10px;background:#0d1727;border-radius:20px;overflow:hidden;margin-top:12px}.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--lime),var(--cyan));transition:width .3s}.section-title{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:28px 0 12px}.section-title h2{margin:0;font-size:1.4rem}.section-title p{margin:0;color:var(--muted);font-size:.9rem}.missions{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.mission{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;min-height:205px}.mission .emoji{font-size:2.25rem}.mission h3{margin:8px 0 4px}.mission p{color:var(--muted);margin:0 0 14px;font-size:.93rem;flex:1}.mission .meta{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.82rem}.done{color:var(--good);font-weight:800}.activity{display:none;margin-top:24px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:clamp(16px,3vw,28px)}.activity.active{display:block}.activity-head{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap}.activity h2{font-size:clamp(1.5rem,3vw,2rem);margin:4px 0}.activity-intro{color:var(--muted);max-width:800px}.pill{display:inline-block;border:1px solid #526b88;color:var(--cyan);border-radius:99px;padding:4px 10px;font-size:.8rem;font-weight:800}.question{margin:18px 0;padding:17px;border:1px solid var(--line);border-radius:16px;background:#17243a}.question h3{margin:0 0 12px;font-size:1.05rem}.answers{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.answer{background:#2b405c;color:white;text-align:left;border:1px solid #506785}.answer.correct{background:#1e684f;border-color:var(--good)}.answer.wrong{background:#713b4b;border-color:var(--bad)}.feedback{margin-top:10px;padding:10px 12px;border-radius:10px;background:#102a35;color:#ccecf0;display:none}.feedback.show{display:block}.small{font-size:.88rem;color:var(--muted)}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.callout{background:#263b55;border-left:4px solid var(--orange);padding:13px 15px;border-radius:10px;margin:14px 0}.sort-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.sort-bin{border:2px dashed #607997;border-radius:16px;padding:14px;min-height:155px;background:#17243a}.sort-bin h3{margin:0 0 10px}.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.chip{background:#344c6b;color:white;border:1px solid #67809f;padding:9px 12px;border-radius:12px}.chip.selected{outline:3px solid var(--cyan)}.chip.placed{opacity:.5}.plan{overflow-x:auto}.plan table{width:100%;border-collapse:collapse;min-width:620px}.plan th,.plan td{padding:9px;border-bottom:1px solid var(--line);text-align:left}.plan th{color:var(--cyan)}.plan input[type=number]{width:78px;background:#101c2d;border:1px solid #526783;border-radius:8px;color:white;padding:8px}.plan select{max-width:190px;background:#101c2d;color:white;border:1px solid #526783;border-radius:8px;padding:8px}.scenario{border:1px solid var(--line);padding:16px;border-radius:14px;margin:12px 0;background:#17243a}.scenario button{margin:5px 5px 0 0}.scenario .response{display:none;color:#d9e9f8;margin-top:10px}.scenario .response.show{display:block}.teacher{display:none;background:#17283e;border:1px solid var(--orange);padding:18px;border-radius:16px;margin-top:20px}.teacher.show{display:block}.teacher h3{color:var(--orange)}.footer{color:var(--muted);text-align:center;padding:28px 10px;font-size:.85rem}.hidden{display:none!important}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:11px 16px;font-weight:750;background:var(--lime);color:#152019;transition:.15s}
+button:hover:not(:disabled){filter:brightness(1.08);transform:translateY(-1px)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+button:disabled{background:#2a3a50;color:#6a82a0;cursor:not-allowed;box-shadow:none;transform:none;}
+.secondary{background:#344b69;color:white;border:1px solid #536987}
+.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.danger{background:#6d3042;color:white}
+.wrap{max-width:1120px;margin:auto;padding:22px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{border-radius:16px;padding:10px 14px;background:white;display:flex;align-items:center;justify-content:center}
+.eyebrow{color:var(--lime);font-size:.78rem;font-weight:850;letter-spacing:.14em;text-transform:uppercase}
+.brand h1{margin:0;font-size:clamp(1.35rem,3vw,2rem);line-height:1.15}
+.brand p{margin:3px 0;color:var(--muted);font-size:.9rem}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.hero{margin:24px 0 18px;padding:26px;border-radius:24px;background:linear-gradient(120deg,#25425e,#293c59 58%,#3b3c63);border:1px solid #49617e;display:flex;flex-direction:column;gap:24px}
+.hero h2{font-size:clamp(1.8rem,4vw,3rem);line-height:1.05;margin:8px 0}
+.hero p{color:#d7e3f2;max-width:800px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.stat{background:#17263b;border:1px solid #4c6380;border-radius:12px;padding:8px 12px;font-weight:700}
+.stat span{color:var(--lime);font-variant-numeric:tabular-nums}
+.progress{height:10px;background:#0d1727;border-radius:20px;overflow:hidden;margin-top:12px}
+.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--lime),var(--cyan));transition:width .3s}
+.section-title{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:28px 0 12px}
+.section-title h2{margin:0;font-size:1.4rem}
+.section-title p{margin:0;color:var(--muted);font-size:.9rem}
+.missions{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.mission{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;min-height:205px}
+.mission .emoji{font-size:2.25rem}
+.mission h3{margin:8px 0 4px}
+.mission p{color:var(--muted);margin:0 0 14px;font-size:.93rem;flex:1}
+.mission .meta{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.82rem;margin-bottom:12px;}
+.done{color:var(--good);font-weight:800}
+.activity{display:none;margin-top:24px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:clamp(16px,3vw,28px)}
+.activity.active{display:block}
+.activity-head{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap}
+.activity h2{font-size:clamp(1.5rem,3vw,2rem);margin:4px 0}
+.activity-intro{color:var(--muted);max-width:800px}
+.pill{display:inline-block;border:1px solid #526b88;color:var(--cyan);border-radius:99px;padding:4px 10px;font-size:.8rem;font-weight:800}
+.question{margin:18px 0;padding:17px;border:1px solid var(--line);border-radius:16px;background:#17243a}
+.question h3{margin:0 0 12px;font-size:1.05rem}
+.answers{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.answer{background:#2b405c;color:white;text-align:left;border:1px solid #506785}
+.answer.correct{background:#1e684f;border-color:var(--good)}
+.answer.wrong{background:#713b4b;border-color:var(--bad)}
+.feedback{margin-top:10px;padding:10px 12px;border-radius:10px;background:#102a35;color:#ccecf0;display:none}
+.feedback.show{display:block}
+.small{font-size:.88rem;color:var(--muted)}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+.callout{background:#263b55;border-left:4px solid var(--orange);padding:13px 15px;border-radius:10px;margin:14px 0}
+.sort-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sort-bin{border:2px dashed #607997;border-radius:16px;padding:14px;min-height:185px;background:#17243a;transition:0.2s;}
+.sort-bin.drag-over{background:#263b55;border-color:var(--lime);}
+.sort-bin h3{margin:0 0 10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;min-height:50px;}
+.chip{background:#344c6b;color:white;border:1px solid #67809f;padding:9px 12px;border-radius:12px;cursor:grab;user-select:none;}
+.chip:active{cursor:grabbing;}
+.chip.selected{outline:3px solid var(--cyan)}
+.plan{overflow-x:auto}
+.plan table{width:100%;border-collapse:collapse;min-width:620px}
+.plan th,.plan td{padding:9px;border-bottom:1px solid var(--line);text-align:left}
+.plan th{color:var(--cyan)}
+.plan input[type=number]{width:78px;background:#101c2d;border:1px solid #526783;border-radius:8px;color:white;padding:8px}
+.plan select{max-width:190px;background:#101c2d;color:white;border:1px solid #526783;border-radius:8px;padding:8px}
+.scenario{border:1px solid var(--line);padding:16px;border-radius:14px;margin:12px 0;background:#17243a}
+.scenario button{margin:5px 5px 0 0}
+.scenario .response{display:none;color:#d9e9f8;margin-top:10px}
+.scenario .response.show{display:block}
+.teacher{display:none;background:#17283e;border:1px solid var(--orange);padding:18px;border-radius:16px;margin-top:20px}
+.teacher.show{display:block}
+.teacher h3{color:var(--orange)}
+.footer{color:var(--muted);text-align:center;padding:28px 10px;font-size:.85rem}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999;align-items:center;justify-content:center;padding:20px;}
+.modal.show{display:flex;}
+.modal-content{background:var(--panel);padding:24px;border-radius:20px;max-width:600px;width:100%;border:2px solid var(--lime);max-height:90vh;overflow-y:auto;}
 @media(max-width:760px){.missions{grid-template-columns:1fr 1fr}.answers{grid-template-columns:1fr}.sort-grid{grid-template-columns:1fr}}
 @media(max-width:480px){.wrap{padding:13px}.missions{grid-template-columns:1fr}.top{align-items:flex-start}}
 </style>
@@ -48,14 +122,14 @@ button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-
  </div>
 </section>
 
-<div class="section-title"><div><h2>Choose your mission</h2><p>Work through the missions in order, or revisit one to practise.</p></div><span class="pill">6 missions • 60-minute lesson</span></div>
+<div class="section-title"><div><h2>Choose your mission</h2><p>Missions unlock automatically as you progress.</p></div><span class="pill">6 missions • 60-minute lesson</span></div>
 <section class="missions" id="missionGrid">
- <article class="mission"><div class="emoji">🦷</div><h3>1. Super Smile</h3><p>Test your knowledge of teeth, brushing and bacteria.</p><div class="meta"><span>5–8 mins</span><span id="status0">Not started</span></div><button onclick="openMission(0)">Start mission →</button></article>
- <article class="mission"><div class="emoji">💉</div><h3>2. Vaccine Detectives</h3><p>Explore the school vaccination information in the lesson.</p><div class="meta"><span>8 mins</span><span id="status1">Not started</span></div><button onclick="openMission(1)">Start mission →</button></article>
- <article class="mission"><div class="emoji">🦠</div><h3>3. Stop the Germs</h3><p>Think about how communicable diseases spread and how to reduce risk.</p><div class="meta"><span>8–10 mins</span><span id="status2">Not started</span></div><button onclick="openMission(2)">Start mission →</button></article>
- <article class="mission"><div class="emoji">🏃</div><h3>4. Fitness Factory</h3><p>Sort activities and create a plan for an active week.</p><div class="meta"><span>10–12 mins</span><span id="status3">Not started</span></div><button onclick="openMission(3)">Start mission →</button></article>
- <article class="mission"><div class="emoji">🧠</div><h3>5. Healthy Choices</h3><p>Make decisions in everyday health and wellbeing scenarios.</p><div class="meta"><span>8–10 mins</span><span id="status4">Not started</span></div><button onclick="openMission(4)">Start mission →</button></article>
- <article class="mission"><div class="emoji">🏆</div><h3>6. Demonstrate</h3><p>Show what you have learned and copy your result.</p><div class="meta"><span>5–7 mins</span><span id="status5">Not started</span></div><button onclick="openMission(5)">Start mission →</button></article>
+ <article class="mission"><div class="emoji">🦷</div><h3>1. Super Smile</h3><p>Test your knowledge of teeth, brushing and bacteria.</p><div class="meta"><span>5–8 mins</span><span id="status0">Not started</span></div><button id="btnM0" onclick="openMission(0)">Start mission →</button></article>
+ <article class="mission"><div class="emoji">💉</div><h3>2. Vaccine Detectives</h3><p>Explore the school vaccination information in the lesson.</p><div class="meta"><span>8 mins</span><span id="status1">Not started</span></div><button id="btnM1" onclick="openMission(1)">Start mission →</button></article>
+ <article class="mission"><div class="emoji">🦠</div><h3>3. Stop the Germs</h3><p>Think about how communicable diseases spread and how to reduce risk.</p><div class="meta"><span>8–10 mins</span><span id="status2">Not started</span></div><button id="btnM2" onclick="openMission(2)">Start mission →</button></article>
+ <article class="mission"><div class="emoji">🏃</div><h3>4. Fitness Factory</h3><p>Sort activities and create a plan for an active week.</p><div class="meta"><span>10–12 mins</span><span id="status3">Not started</span></div><button id="btnM3" onclick="openMission(3)">Start mission →</button></article>
+ <article class="mission"><div class="emoji">🧠</div><h3>5. Healthy Choices</h3><p>Make decisions in everyday health and wellbeing scenarios.</p><div class="meta"><span>8–10 mins</span><span id="status4">Not started</span></div><button id="btnM4" onclick="openMission(4)">Start mission →</button></article>
+ <article class="mission"><div class="emoji">🏆</div><h3>6. Demonstrate</h3><p>Show what you have learned and copy your result.</p><div class="meta"><span>5–7 mins</span><span id="status5">Not started</span></div><button id="btnM5" onclick="openMission(5)">Start mission →</button></article>
 </section>
 
 <section class="activity" id="activity">
@@ -67,19 +141,37 @@ button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-
 <footer class="footer">Health Heroes • Year 7 Physical Health & Wellbeing • Progress is saved on this device only.</footer>
 </div>
 
+<!-- Modal for Class Notebook Export -->
+<div id="certModal" class="modal">
+    <div class="modal-content">
+        <h2 style="color:var(--lime); margin-top:0;">📓 Class Notebook Export</h2>
+        <p style="margin-bottom:14px;">Type your name below to generate your final summary, then click the button to copy it so you can paste it directly into your Class Notebook.</p>
+        <input type="text" id="pupilName" placeholder="Enter your name" style="margin-bottom:14px; padding:10px; width:100%; max-width:300px; border-radius:8px; border:1px solid #526783; background:#101c2d; color:white; font-size:1rem;">
+        <textarea id="notebookText" rows="12" style="width:100%; padding:14px; border-radius:8px; border:1px solid #526783; background:#101c2d; color:white; margin-bottom:14px; font-family:monospace; font-size:1rem; resize:vertical;" readonly></textarea>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <button onclick="copyNotebook()">📋 Copy to Clipboard</button>
+            <button class="secondary" onclick="closeCertModal()">✕ Close</button>
+            <span id="copyMsg" style="color:var(--lime); display:none; font-weight:bold;">✓ Copied! Paste it now!</span>
+        </div>
+    </div>
+</div>
+
 <script>
 const $=id=>document.getElementById(id);
 let score=Number(localStorage.getItem('hh_score')||0);
 let completed=JSON.parse(localStorage.getItem('hh_done')||'[false,false,false,false,false,false]');
-let teacher=false, current=-1, selectedChip=null, sortPlaced={};
+let teacher=false, current=-1;
+let finalResponses = []; // Store responses for the notebook
+
 const missionInfo=[
  ['Super Smile Challenge','Can you become a tooth expert? Answer all five questions. Choose an answer and read the feedback.'],
  ['Vaccine Detectives','Investigate the vaccination information shown in your lesson source. Then check your understanding.'],
  ['Stop the Germs!','Communicable diseases can spread between people. Consider how everyday actions can help protect yourself and others.'],
- ['Fitness Factory','Sort activities into the categories from the lesson, then plan ways to be active during your week.'],
+ ['Fitness Factory','Drag and drop activities into the correct categories. (Hint: some activities belong in both boxes!) Then plan an active week.'],
  ['Healthy Lifestyle Decisions','There is often more than one way to improve wellbeing. Choose a helpful response and explain your thinking.'],
  ['6. Demonstrate','Answer the final ten questions to check your learning, then copy your summary to paste into Class Notebook.']
 ];
+
 const dental=[
  ['Which teeth at the very front of your mouth are shaped like little chisels and are great for biting into a crunchy apple?',['Molars','Incisors','Canines','Wisdom teeth'],1,'Incisors are your sharp front teeth used for cutting and biting food.'],
  ['How long should you brush your pearly whites every time you clean them?',['10 seconds','2 minutes','5 minutes','30 seconds'],1,'The source lesson identifies two minutes as the target brushing time.'],
@@ -99,18 +191,54 @@ const finalQs=[
  ['Which activity is an example of aerobic activity from the lesson?',['Walking','Reading','Sleeping'],0,'Walking is one of the aerobic examples in the presentation.'],
  ['Which activity is listed as a strengthening example?',['Press-ups','Watching television','Drawing'],0,'Press-ups are included in the strengthening examples.']
 ];
+
 function save(){localStorage.setItem('hh_score',score);localStorage.setItem('hh_done',JSON.stringify(completed));updateStats()}
-function updateStats(){let n=completed.filter(Boolean).length; $('score').textContent=score;$('completed').textContent=n+'/6';$('percent').textContent=Math.round(n/6*100)+'%';$('progressBar').style.width=(n/6*100)+'%';completed.forEach((v,i)=>{$('status'+i).textContent=v?'✓ Completed':'Not started';$('status'+i).className=v?'done':''});}
+function updateStats(){
+  let n=completed.filter(Boolean).length; 
+  $('score').textContent=score;
+  $('completed').textContent=n+'/6';
+  $('percent').textContent=Math.round(n/6*100)+'%';
+  $('progressBar').style.width=(n/6*100)+'%';
+  
+  // Handle sequential unlocking
+  completed.forEach((v,i)=>{
+    $('status'+i).textContent=v?'✓ Completed':'Not started';
+    $('status'+i).className=v?'done':'';
+    
+    let btn = $('btnM'+i);
+    // Unlocked if it's the first mission, OR the previous is done, OR this one is already done
+    if (i === 0 || completed[i-1] || v) {
+        btn.disabled = false;
+        btn.textContent = v ? 'Review mission →' : 'Start mission →';
+    } else {
+        btn.disabled = true;
+        btn.textContent = '🔒 Locked';
+    }
+  });
+}
+
 function award(id,points=10){let key='hh_award_'+id;if(!localStorage.getItem(key)){score+=points;localStorage.setItem(key,'1');save();}}
 function markDone(i){completed[i]=true;save();}
-function openMission(i){current=i;selectedChip=null;sortPlaced={};$('activity').classList.add('active');$('missionLabel').textContent='MISSION '+(i+1);$('activityTitle').textContent=missionInfo[i][0];$('activityIntro').textContent=missionInfo[i][1];$('teacherPanel').classList.toggle('show',teacher);renderMission(i);$('activity').scrollIntoView({behavior:'smooth',block:'start'})}
+function openMission(i){current=i;$('activity').classList.add('active');$('missionLabel').textContent='MISSION '+(i+1);$('activityTitle').textContent=missionInfo[i][0];$('activityIntro').textContent=missionInfo[i][1];$('teacherPanel').classList.toggle('show',teacher);renderMission(i);$('activity').scrollIntoView({behavior:'smooth',block:'start'})}
 function closeMission(){$('activity').classList.remove('active')}
-function renderMission(i){let c=$('activityContent');if(i===0)renderQuiz(dental,'dental');if(i===1)renderVaccines();if(i===2)renderGerms();if(i===3)renderFitness();if(i===4)renderChoices();if(i===5)renderQuiz(finalQs,'final');renderTeacher()}
+
+function renderMission(i){
+  let c=$('activityContent');
+  if(i===0)renderQuiz(dental,'dental');
+  if(i===1)renderVaccines();
+  if(i===2)renderGerms();
+  if(i===3)renderFitness();
+  if(i===4)renderChoices();
+  if(i===5)renderQuiz(finalQs,'final');
+  renderTeacher();
+}
+
 function renderQuiz(qs,key){
   let c=$('activityContent');
   c.innerHTML='';
   let answered=0,correct=0;
-  let responses = []; // Array to store pupil answers
+  
+  if (key === 'final') finalResponses = []; // Reset responses for final quiz
   
   qs.forEach((q,qi)=>{
     let box=document.createElement('div');
@@ -126,16 +254,16 @@ function renderQuiz(qs,key){
         if(box.dataset.answered)return;
         box.dataset.answered='1';
         answered++;
-        
         let ok=ai===q[2];
         
-        // Record the response for the notebook export
-        responses[qi] = {
-            question: q[0],
-            selected: a,
-            correct: ok,
-            correctAnswer: q[1][q[2]]
-        };
+        if (key === 'final') {
+            finalResponses[qi] = {
+                question: q[0],
+                selected: a,
+                correct: ok,
+                correctAnswer: q[1][q[2]]
+            };
+        }
         
         if(ok){
           correct++;
@@ -153,69 +281,14 @@ function renderQuiz(qs,key){
         if(answered===qs.length){
           let result=document.createElement('div');
           result.className='callout';
-          result.innerHTML='<strong>Challenge complete: '+correct+'/'+qs.length+' correct.</strong> '+(correct===qs.length?'Perfect score!':'Review the explanations, then discuss any tricky questions.');
+          result.innerHTML=`<strong>Challenge complete: ${correct}/${qs.length} correct.</strong> ` + (correct===qs.length?'Perfect score!':'Review the explanations, then discuss any tricky questions.');
+          
+          if (key === 'final') {
+              result.innerHTML += `<div style="margin-top:16px;"><button onclick="openCertModal()">🏆 Open Certificate & Export</button></div>`;
+          }
+          
           c.appendChild(result);
           markDone(current);
-
-          // Add Notebook Export for Mission 6 (Demonstrate)
-          if(key === 'final') {
-            let exportDiv = document.createElement('div');
-            exportDiv.className = 'question';
-            exportDiv.style.borderColor = 'var(--lime)';
-            exportDiv.style.marginTop = '24px';
-            exportDiv.innerHTML = `
-                <h3 style="color:var(--lime); margin-top:0;">📓 Class Notebook Export</h3>
-                <p style="margin-bottom:14px;">Type your name below to generate your final summary, then click the button to copy it so you can paste it directly into your Class Notebook.</p>
-                <input type="text" id="pupilName" placeholder="Enter your name" style="margin-bottom:14px; padding:10px; width:100%; max-width:300px; border-radius:8px; border:1px solid #526783; background:#101c2d; color:white; font-size:1rem;">
-                <textarea id="notebookText" rows="12" style="width:100%; padding:14px; border-radius:8px; border:1px solid #526783; background:#101c2d; color:white; margin-bottom:14px; font-family:monospace; font-size:1rem; resize:vertical;" readonly></textarea>
-                <div>
-                    <button onclick="copyNotebook()">📋 Copy to Clipboard</button>
-                    <span id="copyMsg" style="margin-left:12px; color:var(--lime); display:none; font-weight:bold;">✓ Copied! Paste it now!</span>
-                </div>
-            `;
-            c.appendChild(exportDiv);
-
-            let nameInput = $('pupilName');
-            let textArea = $('notebookText');
-            
-            function updateText() {
-                let n = completed.filter(Boolean).length;
-                let dateStr = new Date().toLocaleDateString('en-GB');
-                
-                let txt = "========================================\n" +
-                          "🏆 HEALTH HEROES RESULTS 🏆\n" +
-                          "========================================\n" +
-                          "Date: " + dateStr + "\n" +
-                          "Pupil: " + (nameInput.value || "[Type your name]") + "\n" +
-                          "Overall Score: " + score + " points\n" +
-                          "Missions Completed: " + n + "/6\n" +
-                          "Demonstrate Quiz Score: " + correct + "/" + qs.length + "\n" +
-                          "========================================\n\n" +
-                          "--- DEMONSTRATE TASK ---\n\n";
-                          
-                responses.forEach((r, idx) => {
-                    txt += "Q" + (idx + 1) + ": " + r.question + "\n";
-                    txt += "Your Answer: " + r.selected + (r.correct ? " (✅ Correct)" : " (❌ Incorrect)") + "\n";
-                    if (!r.correct) {
-                        txt += "Correct Answer: " + r.correctAnswer + "\n";
-                    }
-                    txt += "\n";
-                });
-
-                textArea.value = txt;
-            }
-            nameInput.addEventListener('input', updateText);
-            updateText(); // Generate initial text
-
-            window.copyNotebook = function() {
-                textArea.select();
-                textArea.setSelectionRange(0, 99999); // For mobile devices
-                navigator.clipboard.writeText(textArea.value).then(()=>{
-                    $("copyMsg").style.display = "inline";
-                    setTimeout(() => $("copyMsg").style.display = "none", 3000);
-                });
-            }
-          }
         }
       };
       ans.appendChild(b);
@@ -223,6 +296,57 @@ function renderQuiz(qs,key){
     c.appendChild(box);
   });
 }
+
+// Certificate / Notebook Export Logic
+function openCertModal() {
+    $('certModal').classList.add('show');
+    updateNotebookText();
+}
+function closeCertModal() {
+    $('certModal').classList.remove('show');
+}
+function updateNotebookText() {
+    let nameInput = $('pupilName');
+    let textArea = $('notebookText');
+    let n = completed.filter(Boolean).length;
+    let dateStr = new Date().toLocaleDateString('en-GB');
+    
+    let correctCount = finalResponses.filter(r => r && r.correct).length;
+
+    let txt = "========================================\n" +
+              "🏆 HEALTH HEROES RESULTS 🏆\n" +
+              "========================================\n" +
+              "Date: " + dateStr + "\n" +
+              "Pupil: " + (nameInput.value || "[Type your name]") + "\n" +
+              "Overall Score: " + score + " points\n" +
+              "Missions Completed: " + n + "/6\n" +
+              "Demonstrate Quiz Score: " + correctCount + "/" + finalQs.length + "\n" +
+              "========================================\n\n" +
+              "--- DEMONSTRATE TASK ---\n\n";
+              
+    finalResponses.forEach((r, idx) => {
+        if (!r) return;
+        txt += "Q" + (idx + 1) + ": " + r.question + "\n";
+        txt += "Your Answer: " + r.selected + (r.correct ? " (✅ Correct)" : " (❌ Incorrect)") + "\n";
+        if (!r.correct) {
+            txt += "Correct Answer: " + r.correctAnswer + "\n";
+        }
+        txt += "\n";
+    });
+    textArea.value = txt;
+}
+$('pupilName').addEventListener('input', updateNotebookText);
+
+window.copyNotebook = function() {
+    let textArea = $('notebookText');
+    textArea.select();
+    textArea.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(textArea.value).then(()=>{
+        $("copyMsg").style.display = "inline";
+        setTimeout(() => $("copyMsg").style.display = "none", 3000);
+    });
+}
+
 function renderVaccines(){let c=$('activityContent');c.innerHTML=`
  <div class="callout"><strong>Source check:</strong> The following year-group information is reproduced from the supplied PowerPoint (labelled National Public Health Vaccines 2026/27). Please check the current school/NHS vaccination schedule before teaching or distributing this information.</div>
  <div class="sort-grid">
@@ -233,6 +357,7 @@ function renderVaccines(){let c=$('activityContent');c.innerHTML=`
  <div class="question"><h3>Quick check: Which vaccination does the source presentation list for Year 8?</h3><div class="answers" id="vaxAnswers"></div><div class="feedback" id="vaxFb"></div></div>
  <div class="actions"><button onclick="markDone(1);award('vax_complete',10);this.textContent='✓ Mission completed'">Complete investigation (+10 points)</button></div>`;
  let opts=['Flu only','HPV','SLB 3-in-1'];opts.forEach((o,i)=>{let b=document.createElement('button');b.className='answer';b.textContent=o;b.onclick=()=>{let f=$('vaxFb');f.textContent=i===1?'Correct! The source presentation lists HPV for Year 8.':'Check the Year 8 panel: it lists HPV.';f.classList.add('show');if(i===1){b.classList.add('correct');award('vax_q',10)}else b.classList.add('wrong')};$('vaxAnswers').appendChild(b)})}
+
 function renderGerms(){let c=$('activityContent');c.innerHTML=`
  <div class="callout"><strong>Think, pair, share:</strong> Your PowerPoint asks: “What can you do at home and in school to protect yourself and others from communicable diseases?” Think of at least three ideas before revealing the suggestions.</div>
  <div class="question"><h3>Choose the actions that can help reduce the spread of germs.</h3><div id="germChoices" class="chips"></div><div class="actions"><button onclick="checkGerms()">Check my choices</button></div><div class="feedback" id="germFb"></div></div>
@@ -240,26 +365,128 @@ function renderGerms(){let c=$('activityContent');c.innerHTML=`
  <div class="actions"><button onclick="markDone(2);award('germs_done',10);this.textContent='✓ Mission completed'">Complete mission (+10 points)</button></div>`;
  let items=['Wash hands with soap','Cover coughs and sneezes','Put used tissues in a bin','Share used tissues','Clean frequently touched surfaces','Ignore hand hygiene'];let right=[0,1,2,4];items.forEach((x,i)=>{let b=document.createElement('button');b.className='chip';b.textContent=x;b.dataset.i=i;b.onclick=()=>b.classList.toggle('selected');$('germChoices').appendChild(b)})}
 function checkGerms(){let chosen=[...document.querySelectorAll('#germChoices .selected')].map(x=>+x.dataset.i),right=[0,1,2,4];let ok=chosen.length===right.length&&right.every(x=>chosen.includes(x));$('germFb').textContent=ok?'Excellent! You selected all four helpful actions and avoided the unhelpful choices.':'Have another look. Select the helpful actions only: washing hands, covering coughs and sneezes, binning used tissues and cleaning frequently touched surfaces.';$('germFb').classList.add('show');if(ok)award('germ_sort',15)}
-const activities=[['Walking','a'],['Walking the dog','a'],['Running','a'],['Swimming','a'],['Cycling','a'],['Dancing','a'],['Skipping','a'],['Football','both'],['Tennis','a'],['Gymnastics','s'],['Martial arts','s'],['Sit-ups','s'],['Press-ups','s'],['Jumping','both'],['PE','a']];
-function renderFitness(){let c=$('activityContent');c.innerHTML=`
- <p>First, sort the examples. Select an activity, then choose the category where it belongs. Some activities can fit more than one category.</p>
- <div class="chips" id="activityChips"></div><div class="sort-grid"><div class="sort-bin"><h3>🏃 Aerobic</h3><div id="aerobicBin" class="chips"></div></div><div class="sort-bin"><h3>💪 Strengthening</h3><div id="strengthBin" class="chips"></div></div></div>
- <div class="actions"><button class="secondary" onclick="checkSort()">Check sorting</button><span id="sortFeedback" class="small"></span></div>
+
+// ----------------- DRAG AND DROP FITNESS LOGIC ----------------- //
+const dragActivities = [
+    {id:'d1', name:'Walking', cat:'a'},
+    {id:'d2', name:'Walking the dog', cat:'a'},
+    {id:'d3', name:'Running', cat:'a'},
+    {id:'d4', name:'Swimming', cat:'a'},
+    {id:'d5', name:'Cycling', cat:'a'},
+    {id:'d6', name:'Dancing', cat:'a'},
+    {id:'d7', name:'Skipping', cat:'a'},
+    {id:'d8', name:'Tennis', cat:'a'},
+    {id:'d9', name:'PE', cat:'a'},
+    {id:'d10', name:'Gymnastics', cat:'s'},
+    {id:'d11', name:'Martial arts', cat:'s'},
+    {id:'d12', name:'Sit-ups', cat:'s'},
+    {id:'d13', name:'Press-ups', cat:'s'},
+    {id:'d14', name:'Football', cat:'a'}, // Aerobic duplicate
+    {id:'d15', name:'Football', cat:'s'}, // Strength duplicate
+    {id:'d16', name:'Jumping', cat:'a'},  // Aerobic duplicate
+    {id:'d17', name:'Jumping', cat:'s'}   // Strength duplicate
+];
+
+function renderFitness(){
+ let c=$('activityContent');
+ c.innerHTML=`
+ <div class="callout" style="background:#17243a; border-left-color:var(--cyan);">
+    <strong>Instructions:</strong> Drag and drop the activities into the correct boxes below. <br>
+    <em>Note: Football and Jumping appear twice because they belong in both boxes!</em><br>
+    (Made a mistake? Click an item inside a box to throw it back here).
+ </div>
+ <div id="activityPool" class="chips" style="background:#101c2d; padding:16px; border-radius:12px; border:1px solid #3b506d; min-height:80px;" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+ 
+ <div class="sort-grid">
+    <div class="sort-bin" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <h3>🏃 Aerobic</h3>
+        <div id="aerobicBin" class="chips" style="min-height:120px;"></div>
+    </div>
+    <div class="sort-bin" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <h3>💪 Strengthening</h3>
+        <div id="strengthBin" class="chips" style="min-height:120px;"></div>
+    </div>
+ </div>
+ 
+ <div class="actions"><button class="secondary" onclick="checkSort()">Check sorting</button><span id="sortFeedback" class="small" style="line-height:44px;"></span></div>
+ 
  <hr style="border-color:var(--line);margin:24px 0">
- <h3>📅 Plan your week</h3><p class="small">Add an activity and the number of minutes you plan to do it. The lesson slide says: “60 mins. of moderate-vigorous activity (20 mins. on 3 days).” Confirm the intended timeframe and current guidance with your teacher.</p>
+ <h3>📅 Plan your week</h3><p class="small">Add an activity and the number of minutes you plan to do it. The lesson slide says: “60 mins. of moderate-vigorous activity (20 mins. on 3 days).”</p>
  <div class="plan"><table><thead><tr><th>Day</th><th>Activity</th><th>Minutes</th></tr></thead><tbody id="weekRows"></tbody></table></div>
- <p><strong>Total planned minutes: <span id="totalMins">0</span></strong></p><div class="actions"><button onclick="savePlan()">Save my plan (+10 points)</button></div><div class="feedback" id="planFb"></div>
- <div class="callout"><strong>Think:</strong> Which days include aerobic activity? Which days include strengthening activity? Is your plan realistic for your week?</div>`;
- activities.forEach((a,i)=>{let b=document.createElement('button');b.className='chip';b.textContent=a[0];b.onclick=()=>{selectedChip=i;document.querySelectorAll('#activityChips .chip').forEach((x,j)=>x.classList.toggle('selected',j===i))};$('activityChips').appendChild(b)});
- ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].forEach(d=>{let tr=document.createElement('tr');tr.innerHTML='<td>'+d+'</td><td><select aria-label="'+d+' activity"><option value="">Choose activity</option>'+activities.map(a=>'<option>'+a[0]+'</option>').join('')+'</select></td><td><input type="number" min="0" max="300" value="0" aria-label="'+d+' minutes" oninput="updateTotal()"></td>';$('weekRows').appendChild(tr)});
- $('activityChips').insertAdjacentHTML('beforebegin','<div class="small">Selected activity: <span id="selectedName">none</span>. Choose a category below to place it.</div>');
- $('aerobicBin').insertAdjacentHTML('beforeend','<button class="secondary" onclick="placeActivity(\'a\')">+ Add selected activity</button>');
- $('strengthBin').insertAdjacentHTML('beforeend','<button class="secondary" onclick="placeActivity(\'s\')">+ Add selected activity</button>');
+ <p><strong>Total planned minutes: <span id="totalMins">0</span></strong></p><div class="actions"><button onclick="savePlan()">Save my plan (+10 points)</button></div><div class="feedback" id="planFb"></div>`;
+ 
+ // Shuffle function for the pool
+ let shuffled = [...dragActivities].sort(() => Math.random() - 0.5);
+ 
+ shuffled.forEach(a=>{
+    let b=document.createElement('div');
+    b.className='chip';
+    b.id=a.id;
+    b.textContent=a.name;
+    b.dataset.cat=a.cat;
+    b.draggable=true;
+    b.ondragstart = (ev) => ev.dataTransfer.setData("text", ev.target.id);
+    b.onclick = function() {
+        if(this.parentElement.id !== 'activityPool') {
+            $('activityPool').appendChild(this);
+        }
+    };
+    $('activityPool').appendChild(b);
+ });
+ 
+ const selectOptions = ['Walking','Walking the dog','Running','Swimming','Cycling','Dancing','Skipping','Football','Tennis','Gymnastics','Martial arts','Sit-ups','Press-ups','Jumping','PE'];
+ ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].forEach(d=>{
+    let tr=document.createElement('tr');
+    tr.innerHTML='<td>'+d+'</td><td><select aria-label="'+d+' activity"><option value="">Choose activity</option>'+selectOptions.map(a=>'<option>'+a+'</option>').join('')+'</select></td><td><input type="number" min="0" max="300" value="0" aria-label="'+d+' minutes" oninput="updateTotal()"></td>';
+    $('weekRows').appendChild(tr);
+ });
 }
-function placeActivity(cat){if(selectedChip===null)return;let a=activities[selectedChip];let target=cat==='a'?'aerobicBin':'strengthBin';let el=document.createElement('span');el.className='chip';el.textContent=a[0];el.dataset.idx=selectedChip;$(target).appendChild(el);document.querySelectorAll('#activityChips .chip')[selectedChip].classList.add('placed');selectedChip=null;document.querySelectorAll('#activityChips .chip').forEach(x=>x.classList.remove('selected'))}
-function checkSort(){let a=[...$('aerobicBin').querySelectorAll('[data-idx]')].map(x=>+x.dataset.idx),s=[...$('strengthBin').querySelectorAll('[data-idx]')].map(x=>+x.dataset.idx);let ok=activities.every((v,i)=>v[1]==='both'?(a.includes(i)&&s.includes(i)):v[1]==='a'?a.includes(i):s.includes(i));$('sortFeedback').textContent=ok?'Great sorting! (+15 points)':'Some activities are missing or in the wrong category. Remember football and jumping can be both.';if(ok)award('fitness_sort',15)}
+
+window.allowDrop = (ev) => {
+    ev.preventDefault();
+};
+
+window.drop = (ev) => {
+    ev.preventDefault();
+    let data = ev.dataTransfer.getData("text");
+    let el = document.getElementById(data);
+    if (!el) return;
+    
+    // Find the correct drop target (either the pool or the .chips container inside a bin)
+    let dropZone;
+    if (ev.target.id === 'activityPool' || ev.target.id === 'aerobicBin' || ev.target.id === 'strengthBin') {
+        dropZone = ev.target;
+    } else if (ev.target.closest('.sort-bin')) {
+        dropZone = ev.target.closest('.sort-bin').querySelector('.chips');
+    }
+    
+    if (dropZone) dropZone.appendChild(el);
+};
+
+function checkSort(){
+    let aNodes = [...$('aerobicBin').querySelectorAll('.chip')];
+    let sNodes = [...$('strengthBin').querySelectorAll('.chip')];
+    let poolNodes = [...$('activityPool').querySelectorAll('.chip')];
+    
+    if(poolNodes.length > 0) {
+        $('sortFeedback').textContent = 'Please sort all activities out of the starting box first!';
+        return;
+    }
+    
+    let ok = true;
+    aNodes.forEach(n => { if(n.dataset.cat !== 'a') ok = false; });
+    sNodes.forEach(n => { if(n.dataset.cat !== 's') ok = false; });
+    
+    if(ok){
+        $('sortFeedback').textContent = 'Great sorting! (+15 points)';
+        award('fitness_sort', 15);
+    } else {
+        $('sortFeedback').textContent = 'Some activities are in the wrong category. Click an item to remove it and try again!';
+    }
+}
 function updateTotal(){let n=[...document.querySelectorAll('#weekRows input')].reduce((s,x)=>s+(+x.value||0),0);$('totalMins').textContent=n}
 function savePlan(){let rows=[...document.querySelectorAll('#weekRows tr')],filled=rows.some(r=>r.querySelector('select').value&&+r.querySelector('input').value>0);$('planFb').textContent=filled?'Plan saved on this device. Discuss whether it is balanced and realistic.':'Add at least one activity and a number of minutes first.';$('planFb').classList.add('show');if(filled){award('fitness_plan',10);markDone(3)}}
+
 function renderChoices(){
  let c=$('activityContent');
  c.innerHTML = '';
@@ -271,6 +498,7 @@ function renderChoices(){
  ];
  data.forEach((q,i)=>{let d=document.createElement('div');d.className='scenario';d.innerHTML='<h3>Scenario '+(i+1)+'</h3><p>'+q[0]+'</p>';q[1].forEach((o,j)=>{let b=document.createElement('button');b.className='secondary';b.textContent=o;b.onclick=()=>{if(d.dataset.done)return;d.dataset.done='1';let r=d.querySelector('.response');r.textContent=(j===q[2]?'Good choice! ':'Think about this choice. ')+q[3];r.classList.add('show');if(j===q[2])award('scenario_'+i,10)};d.appendChild(b)});let r=document.createElement('div');r.className='response';d.appendChild(r);c.appendChild(d)});
  c.insertAdjacentHTML('beforeend','<div class="actions"><button onclick="markDone(4);award(\'choices_done\',10);this.textContent=\'✓ Mission completed\'">Complete mission (+10 points)</button></div>')}
+
 function renderTeacher(){
   let t=$('teacherContent');
   if(!t)return;
@@ -285,8 +513,10 @@ function renderTeacher(){
   
   t.innerHTML = `<p><strong>Lesson objective:</strong> To learn how to keep yourself fit and healthy.</p><p><strong>Suggested lesson sequence:</strong> Super Smile 5–8 min; Vaccine Detectives 8 min; Stop the Germs 8–10 min; Fitness Factory 10–12 min; Healthy Choices 8–10 min; Final Challenge 5–7 min; plenary 5 min. Adapt timings to your class.</p>${notes[current]}<div class="callout"><strong>Safeguarding reminder:</strong> Keep discussion general and inclusive. Do not invite pupils to disclose medical details or vaccination status. Follow your school's safeguarding and health education policies.</div>`;
 }
+
 $('teacherToggle').onclick=()=>{teacher=!teacher;$('teacherToggle').textContent=teacher?'👩‍🏫 Teacher mode: ON':'👩‍🏫 Teacher mode';$('teacherPanel').classList.toggle('show',teacher);if(current>=0)renderTeacher()};
 $('resetBtn').onclick=()=>{if(confirm('Reset all Health Heroes scores and mission progress on this device?')){score=0;completed=[false,false,false,false,false,false];Object.keys(localStorage).filter(k=>k.startsWith('hh_')).forEach(k=>localStorage.removeItem(k));save();if(current>=0)renderMission(current)}};
+
 updateStats();
 </script>
 </body></html>

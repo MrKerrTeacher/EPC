@@ -128,14 +128,19 @@ function renderChoices(){let c=$('activityContent');let data=[
  ];
  data.forEach((q,i)=>{let d=document.createElement('div');d.className='scenario';d.innerHTML='<h3>Scenario '+(i+1)+'</h3><p>'+q[0]+'</p>';q[1].forEach((o,j)=>{let b=document.createElement('button');b.className='secondary';b.textContent=o;b.onclick=()=>{if(d.dataset.done)return;d.dataset.done='1';let r=d.querySelector('.response');r.textContent=(j===q[2]?'Good choice! ':'Think about this choice. ')+q[3];r.classList.add('show');if(j===q[2])award('scenario_'+i,10)};d.appendChild(b)});let r=document.createElement('div');r.className='response';d.appendChild(r);c.appendChild(d)});
  c.insertAdjacentHTML('beforeend','<div class="actions"><button onclick="markDone(4);award(\'choices_done\',10);this.textContent=\'✓ Mission completed\'">Complete mission (+10 points)</button></div>')}
-function renderTeacher(){let t=$('teacherContent');if(!t)return;let notes=[
- 'Answers: Q1 Incisors; Q2 2 minutes; Q3 Enamel; Q4 Molars; Q5 Bacteria. Use the feedback to correct misconceptions.',
- 'The supplied PowerPoint lists: Year 7 Flu; Year 8 Flu + HPV; Year 9 Flu + SLB/Men. It describes Flu as a nasal spray, HPV as an injection, and SLB as a 3-in-1 booster. Verify the current local/NHS schedule before delivery.',
- 'Prompt pupils to suggest hand hygiene, covering coughs/sneezes, disposing of tissues and cleaning frequently touched surfaces. Use the PBS “Gross Science” clip referenced in the slide deck.',
- 'The supplied slide gives aerobic examples (walking, dog walking, playground activities, PE, football/tennis, swimming, skipping, dancing, skateboarding/rollerblading, cycling) and strengthening examples (gymnastics, football, jumping, martial arts, sit-ups, press-ups). The slide wording about “60 mins” and “20 mins on 3 days” needs clarification before teaching.',
- 'Encourage supportive, non-judgemental discussion. Avoid asking pupils to disclose personal or family health information. Signpost concerns through school safeguarding procedures.',
- 'Final quiz answers are shown in the feedback after each question. Use results to identify topics needing reteaching.'
- ];t.innerHTML='<p><strong>Lesson objective:</strong> To learn how to keep yourself fit and healthy.</p><p><strong>Suggested lesson sequence:</strong> Super Smile 5–8 min; Vaccine Detectives 8 min; Stop the Germs 8–10 min; Fitness Factory 10–12 min; Healthy Choices 8–10 min; Final Challenge 5–7 min; plenary 5 min. Adapt timings to your class.</p>'+notes[current]+'<div class="callout"><strong>Safeguarding reminder:</strong> Keep discussion general and inclusive. Do not invite pupils to disclose medical details or vaccination status. Follow your school's safeguarding and health education policies.</div>';
+function renderTeacher(){
+  let t=$('teacherContent');
+  if(!t)return;
+  let notes=[
+    'Answers: Q1 Incisors; Q2 2 minutes; Q3 Enamel; Q4 Molars; Q5 Bacteria. Use the feedback to correct misconceptions.',
+    'The supplied PowerPoint lists: Year 7 Flu; Year 8 Flu + HPV; Year 9 Flu + SLB/Men. It describes Flu as a nasal spray, HPV as an injection, and SLB as a 3-in-1 booster. Verify the current local/NHS schedule before delivery.',
+    'Prompt pupils to suggest hand hygiene, covering coughs/sneezes, disposing of tissues and cleaning frequently touched surfaces. Use the PBS “Gross Science” clip referenced in the slide deck.',
+    'The supplied slide gives aerobic examples (walking, dog walking, playground activities, PE, football/tennis, swimming, skipping, dancing, skateboarding/rollerblading, cycling) and strengthening examples (gymnastics, football, jumping, martial arts, sit-ups, press-ups). The slide wording about “60 mins” and “20 mins on 3 days” needs clarification before teaching.',
+    'Encourage supportive, non-judgemental discussion. Avoid asking pupils to disclose personal or family health information. Signpost concerns through school safeguarding procedures.',
+    'Final quiz answers are shown in the feedback after each question. Use results to identify topics needing reteaching.'
+  ];
+  
+  t.innerHTML = `<p><strong>Lesson objective:</strong> To learn how to keep yourself fit and healthy.</p><p><strong>Suggested lesson sequence:</strong> Super Smile 5–8 min; Vaccine Detectives 8 min; Stop the Germs 8–10 min; Fitness Factory 10–12 min; Healthy Choices 8–10 min; Final Challenge 5–7 min; plenary 5 min. Adapt timings to your class.</p>${notes[current]}<div class="callout"><strong>Safeguarding reminder:</strong> Keep discussion general and inclusive. Do not invite pupils to disclose medical details or vaccination status. Follow your school's safeguarding and health education policies.</div>`;
 }
 $('teacherToggle').onclick=()=>{teacher=!teacher;$('teacherToggle').textContent=teacher?'👩‍🏫 Teacher mode: ON':'👩‍🏫 Teacher mode';$('teacherPanel').classList.toggle('show',teacher);if(current>=0)renderTeacher()};
 $('resetBtn').onclick=()=>{if(confirm('Reset all Health Heroes scores and mission progress on this device?')){score=0;completed=[false,false,false,false,false,false];Object.keys(localStorage).filter(k=>k.startsWith('hh_')).forEach(k=>localStorage.removeItem(k));save();$('certificate').classList.remove('show');if(current>=0)renderMission(current)}};

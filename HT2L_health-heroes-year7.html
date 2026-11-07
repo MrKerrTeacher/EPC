@@ -201,8 +201,8 @@ const finalQs=[
  ['What is the name of the hard outer covering of a tooth?',['Enamel','Pulp','Gum'],0,'Enamel protects the outside of the tooth.'],
  ['How long does the lesson say you should brush your teeth?',['30 seconds','2 minutes','5 minutes'],1,'The lesson gives two minutes.'],
  ['In the source presentation, how is the school Flu vaccine delivered?',['Nasal spray','Tablet','Cream'],0,'The source says it is delivered as a nasal spray each autumn.'],
- ['According to the source presentation, which year group is listed for HPV?',['Year 7','Year 8','Year 9'],1,'The presentation lists HPV for Year 8.'],
- ['What does the source presentation say the Year 9 school booster protects against?',['Measles, mumps and rubella','Tetanus, diphtheria and polio','Flu and chickenpox'],1,'The source describes the 3-in-1 booster as protecting against tetanus, diphtheria and polio.'],
+ ['According to the source presentation, which year group is listed for HPV?',['Year 7','Year 8','Year 9'],1,'At Laurel the HPV is offered for Year 8.'],
+ ['What does Year 9 school booster vaccincation protect against?',['Measles, mumps and rubella','Tetanus, diphtheria and polio','Flu and chickenpox'],1,'The source describes the 3-in-1 booster as protecting against tetanus, diphtheria and polio.'],
  ['What is a communicable disease?',['A disease that can spread between people','An injury from sport','A broken bone'],0,'Communicable diseases can be transmitted from one person to another.'],
  ['Which is a sensible way to reduce the spread of germs?',['Share used tissues','Cover coughs and sneezes and wash hands','Ignore hand hygiene'],1,'Good respiratory and hand hygiene can reduce the spread of infection.'],
  ['Which activity is an example of aerobic activity from the lesson?',['Walking','Reading','Sleeping'],0,'Walking is one of the aerobic examples in the presentation.'],
@@ -403,9 +403,9 @@ function renderVaccines(){
  c.innerHTML=`
  <div class="callout"><strong>Source check:</strong> The following year-group information is reproduced from the supplied PowerPoint (labelled National Public Health Vaccines 2026/27). Please check the current school/NHS vaccination schedule before teaching or distributing this information.</div>
  <div class="sort-grid">
-  <div class="question"><h3>Year 7</h3><div style="font-size:2rem">💨</div><strong>Flu (Influenza)</strong><p>Source slide: nasal spray delivered in school each autumn (Year 7–Year 11).</p><p>Reason given: protection against serious illness and helping stop the virus spreading to vulnerable people.</p></div>
-  <div class="question"><h3>Year 8</h3><div style="font-size:2rem">🛡️</div><strong>HPV</strong><p>Human Papillomavirus infections.</p><p>Source slide: injection to protect against genital warts and several types of cancer.</p></div>
-  <div class="question"><h3>Year 9</h3><div style="font-size:2rem">💉</div><strong>SLB (3-in-1 school booster)</strong><p>Source slide: injection to protect against tetanus, diphtheria and polio.</p></div>
+  <div class="question"><h3>Flu (influenza)</h3><div style="font-size:2rem">💨</div><strong>Flu (Influenza)</strong><p>Source slide: nasal spray delivered in school each autumn (Year 7–Year 11).</p><p>Reason given: protection against serious illness and helping stop the virus spreading to vulnerable people.</p></div>
+  <div class="question"><h3>HPV</h3><div style="font-size:2rem">🛡️</div><strong>HPV</strong><p>Human Papillomavirus infections.</p><p>Source slide: injection to protect against genital warts and several types of cancer.</p></div>
+  <div class="question"><h3>SLB</h3><div style="font-size:2rem">💉</div><strong>SLB (3-in-1 school booster)</strong><p>Source slide: injection to protect against tetanus, diphtheria and polio.</p></div>
  </div>
  <div class="question"><h3>Quick check: Which vaccination does the source presentation list for Year 8?</h3><div class="answers" id="vaxAnswers"></div><div class="feedback" id="vaxFb"></div></div>
  <div class="actions"><button onclick="markDone(1);award('vax_complete',10);this.textContent='✓ Mission completed'">Complete investigation (+10 points)</button></div>`;

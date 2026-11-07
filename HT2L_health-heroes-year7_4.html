@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Health Heroes | Year 7 Physical Health & Wellbeing</title>
+<style>
+:root{--bg:#101827;--panel:#1b2940;--panel2:#243650;--ink:#f4f7fb;--muted:#b9c7d9;--lime:#a8e65b;--cyan:#62d8e8;--orange:#ffb454;--pink:#ff7f9e;--good:#5bd69a;--bad:#ff8291;--line:#3b506d}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 10% 0%,#203657 0,transparent 34%),var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:11px 16px;font-weight:750;background:var(--lime);color:#152019;transition:.15s}
+button:hover:not(:disabled){filter:brightness(1.08);transform:translateY(-1px)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+button:disabled{background:#2a3a50;color:#6a82a0;cursor:not-allowed;box-shadow:none;transform:none;}
+.secondary{background:#344b69;color:white;border:1px solid #536987}
+.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.danger{background:#6d3042;color:white}
+.wrap{max-width:1120px;margin:auto;padding:22px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{border-radius:16px;padding:10px 14px;background:white;display:flex;align-items:center;justify-content:center}
+.eyebrow{color:var(--lime);font-size:.78rem;font-weight:850;letter-spacing:.14em;text-transform:uppercase}
+.brand h1{margin:0;font-size:clamp(1.35rem,3vw,2rem);line-height:1.15}
+.brand p{margin:3px 0;color:var(--muted);font-size:.9rem}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.hero{margin:24px 0 18px;padding:26px;border-radius:24px;background:linear-gradient(120deg,#25425e,#293c59 58%,#3b3c63);border:1px solid #49617e;display:flex;flex-direction:column;gap:24px}
+.hero h2{font-size:clamp(1.8rem,4vw,3rem);line-height:1.05;margin:8px 0}
+.hero p{color:#d7e3f2;max-width:800px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.stat{background:#17263b;border:1px solid #4c6380;border-radius:12px;padding:8px 12px;font-weight:700}
+.stat span{color:var(--lime);font-variant-numeric:tabular-nums}
+.progress{height:10px;background:#0d1727;border-radius:20px;overflow:hidden;margin-top:12px}
+.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--lime),var(--cyan));transition:width .3s}
+.section-title{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:28px 0 12px}
+.section-title h2{margin:0;font-size:1.4rem}
+.section-title p{margin:0;color:var(--muted);font-size:.9rem}
+.missions{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.mission{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;min-height:205px}
+.mission .emoji{font-size:2.25rem}
+.mission h3{margin:8px 0 4px}
+.mission p{color:var(--muted);margin:0 0 14px;font-size:.93rem;flex:1}
+.mission .meta{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.82rem;margin-bottom:12px;}
+.done{color:var(--good);font-weight:800}
+.activity{display:none;margin-top:24px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:clamp(16px,3vw,28px)}
+.activity.active{display:block}
+.activity-head{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap}
+.activity h2{font-size:clamp(1.5rem,3vw,2rem);margin:4px 0}
+.activity-intro{color:var(--muted);max-width:800px}
+.pill{display:inline-block;border:1px solid #526b88;color:var(--cyan);border-radius:99px;padding:4px 10px;font-size:.8rem;font-weight:800}
+.question{margin:18px 0;padding:17px;border:1px solid var(--line);border-radius:16px;background:#17243a}
+.question h3{margin:0 0 12px;font-size:1.05rem}
+.answers{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.answer{background:#2b405c;color:white;text-align:left;border:1px solid #506785}
+.answer.correct{background:#1e684f;border-color:var(--good)}
+.answer.wrong{background:#713b4b;border-color:var(--bad)}
+.feedback{margin-top:10px;padding:10px 12px;border-radius:10px;background:#102a35;color:#ccecf0;display:none}
+.feedback.show{display:block}
+.small{font-size:.88rem;color:var(--muted)}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+.callout{background:#263b55;border-left:4px solid var(--orange);padding:13px 15px;border-radius:10px;margin:14px 0}
+.sort-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sort-bin{border:2px dashed #607997;border-radius:16px;padding:14px;min-height:185px;background:#17243a;transition:0.2s;}
+.sort-bin.drag-over{background:#263b55;border-color:var(--lime);}
+.sort-bin h3{margin:0 0 10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;min-height:50px;}
+.chip{background:#344c6b;color:white;border:1px solid #67809f;padding:9px 12px;border-radius:12px;cursor:grab;user-select:none;}
+.chip:active{cursor:grabbing;}
+.chip.selected{outline:3px solid var(--cyan)}
+.plan{overflow-x:auto}
+.plan table{width:100%;border-collapse:collapse;min-width:620px}
+.plan th,.plan td{padding:9px;border-bottom:1px solid var(--line);text-align:left}
+.plan th{color:var(--cyan)}
+.plan input[type=number]{width:78px;background:#101c2d;border:1px solid #526783;border-radius:8px;color:white;padding:8px}
+.plan select{max-width:190px;background:#101c2d;color:white;border:1px solid #526783;border-radius:8px;padding:8px}
+.scenario{border:1px solid var(--line);padding:16px;border-radius:14px;margin:12px 0;background:#17243a}
+.scenario button{margin:5px 5px 0 0}
+.scenario .response{display:none;color:#d9e9f8;margin-top:10px}
+.scenario .response.show{display:block}
+.teacher{display:none;background:#17283e;border:1px solid var(--orange);padding:18px;border-radius:16px;margin-top:20px}
+.teacher.show{display:block}
+.teacher h3{color:var(--orange)}
+.footer{color:var(--muted);text-align:center;padding:28px 10px;font-size:.85rem}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999;align-items:center;justify-content:center;padding:20px;}
+.modal.show{display:flex;}
+.modal-content{background:var(--panel);padding:24px;border-radius:20px;max-width:600px;width:100%;border:2px solid var(--lime);max-height:90vh;overflow-y:auto;}
+@media(max-width:760px){.missions{grid-template-columns:1fr 1fr}.answers{grid-template-columns:1fr}.sort-grid{grid-template-columns:1fr}}
+@media(max-width:480px){.wrap{padding:13px}.missions{grid-template-columns:1fr}.top{align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+ <div class="brand">
+   <div class="logo">
+     <img src="TheLaurel_DELTA_Cropped.png" alt="The Laurel Delta" style="height: 38px; display: block; object-fit: contain;">
+   </div>
+   <div>
+     <div class="eyebrow">Year 7 • Personal Development / RSHE</div>
+     <h1>HEALTH HEROES</h1>
+     <p>Physical Health & Wellbeing • Interactive lesson</p>
+   </div>
+ </div>
+ <div class="top-actions">
+   <button class="secondary" id="teacherToggle">👩‍🏫 Teacher mode</button>
+   <button class="ghost" id="resetBtn">↻ Reset progress</button>
+ </div>
+</header>
+
+<section class="hero">
+ <div>
+   <div class="eyebrow">Your mission starts here</div>
+   <h2>Build healthy habits.<br>Become a Health Hero.</h2>
+   <p>Complete six missions to explore dental health, vaccinations, stopping the spread of infection and keeping active. Collect points as you learn.</p>
+   <div class="stats">
+     <div class="stat">⭐ Score: <span id="score">0</span></div>
+     <div class="stat">🏅 Missions: <span id="completed">0/6</span></div>
+     <div class="stat">📈 Progress: <span id="percent">0%</span></div>
+   </div>
+   <div class="progress"><div id="progressBar"></div></div>
+   
+   <div id="mainCertContainer" style="display:none; text-align:center; width:100%; margin-top:20px;">
+      <button class="answer correct" onclick="openCertModal()" style="font-size:1.2rem; padding:16px 24px; box-shadow: 0 4px 15px rgba(91,214,154,0.3); border:2px solid var(--good); width:100%;">🏆 All Missions Complete! Open Certificate</button>
+   </div>
+ </div>
+ <div style="text-align: center; width: 100%; margin-top: 10px;">
+   <img src="image_ba9929.jpg" alt="Learning Journey Pathway" style="max-width: 100%; border-radius: 16px; border: 2px solid #49617e; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+ </div>
+</section>
+
+<div class="section-title"><div><h2>Choose your mission</h2><p>Missions unlock automatically as you progress.</p></div><span class="pill">6 missions • 60-minute lesson</span></div>
+<section class="missions" id="missionGrid">
+ <article class="mission"><div class="emoji">🦷</div><h3>1. Super Smile</h3><p>Test your knowledge of teeth, brushing and bacteria.</p><div class="meta"><span>5–8 mins</span><span id="status0">Not started</span></div><button id="btnM0" onclick="openMission(0)">Start mission →</button></article>
+ <article class="mission"><div class="emoji">💉</div><h3>2. Vaccine Detectives</h3><p>Explore the school vaccination information in the lesson.</p><div class="meta"><span>8 mins</span><span id="status1">Not started</span></div><button id="btnM1" onclick="openMission(1)" disabled>🔒 Locked</button></article>
+ <article class="mission"><div class="emoji">🦠</div><h3>3. Stop the Germs</h3><p>Think about how communicable diseases spread and how to reduce risk.</p><div class="meta"><span>8–10 mins</span><span id="status2">Not started</span></div><button id="btnM2" onclick="openMission(2)" disabled>🔒 Locked</button></article>
+ <article class="mission"><div class="emoji">🏃</div><h3>4. Fitness Factory</h3><p>Sort activities and create a plan for an active week.</p><div class="meta"><span>10–12 mins</span><span id="status3">Not started</span></div><button id="btnM3" onclick="openMission(3)" disabled>🔒 Locked</button></article>
+ <article class="mission"><div class="emoji">🧠</div><h3>5. Healthy Choices</h3><p>Make decisions in everyday health and wellbeing scenarios.</p><div class="meta"><span>8–10 mins</span><span id="status4">Not started</span></div><button id="btnM4" onclick="openMission(4)" disabled>🔒 Locked</button></article>
+ <article class="mission"><div class="emoji">🏆</div><h3>6. Demonstrate</h3><p>Show what you have learned and copy your result.</p><div class="meta"><span>5–7 mins</span><span id="status5">Not started</span></div><button id="btnM5" onclick="openMission(5)" disabled>🔒 Locked</button></article>
+</section>
+
+<section class="activity" id="activity">
+ <div class="activity-head"><div><span class="eyebrow" id="missionLabel">MISSION 1</span><h2 id="activityTitle"></h2><p class="activity-intro" id="activityIntro"></p></div><button class="ghost" onclick="closeMission()">✕ Close</button></div>
+ <div id="activityContent"></div>
+ <div class="teacher" id="teacherPanel"><h3>👩‍🏫 Teacher dashboard</h3><div id="teacherContent"></div></div>
+</section>
+
+<footer class="footer">Health Heroes • Year 7 Physical Health & Wellbeing • Progress is saved on this device only.</footer>
+</div>
+
+<!-- Modal for Class Notebook Export -->
+<div id="certModal" class="modal">
+    <div class="modal-content">
+        <h2 style="color:var(--lime); margin-top:0;">📓 Class Notebook Export</h2>
+        <p style="margin-bottom:14px;">Type your name below to generate your final summary, then click the button to copy it so you can paste it directly into your Class Notebook.</p>
+        <input type="text" id="pupilName" placeholder="Enter your name" style="margin-bottom:14px; padding:10px; width:100%; max-width:300px; border-radius:8px; border:1px solid #526783; background:#101c2d; color:white; font-size:1rem;">
+        <textarea id="notebookText" rows="12" style="width:100%; padding:14px; border-radius:8px; border:1px solid #526783; background:#101c2d; color:white; margin-bottom:14px; font-family:monospace; font-size:1rem; resize:vertical;" readonly></textarea>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <button onclick="copyNotebook()">📋 Copy to Clipboard</button>
+            <button class="secondary" onclick="closeCertModal()">✕ Close</button>
+            <span id="copyMsg" style="color:var(--lime); display:none; font-weight:bold;">✓ Copied! Paste into your class notebook now!</span>
+        </div>
+    </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let score=Number(localStorage.getItem('hh_score')||0);
+let completed=JSON.parse(localStorage.getItem('hh_done')||'[false,false,false,false,false,false]');
+let teacher=false, current=-1;
+
+// Global state for saving answers locally
+let state = JSON.parse(localStorage.getItem('hh_state')) || { 
+    m0: [], 
+    m1: -1, 
+    m2: [], 
+    m3: { bins: null, plan: [] }, 
+    m4: [], 
+    m5: [] 
+};
+
+function saveState() { 
+    localStorage.setItem('hh_state', JSON.stringify(state)); 
+}
+
+const missionInfo=[
+ ['Super Smile Challenge','Can you become a tooth expert? Answer all five questions. Choose an answer and read the feedback.'],
+ ['Vaccine Detectives','Investigate the vaccination information shown in your lesson source. Then check your understanding.'],
+ ['Stop the Germs!','Communicable diseases can spread between people. Consider how everyday actions can help protect yourself and others.'],
+ ['Fitness Factory','Drag and drop activities into the correct categories. (Hint: some activities belong in both boxes!) Then plan an active week.'],
+ ['Healthy Lifestyle Decisions','There is often more than one way to improve wellbeing. Choose a helpful response and explain your thinking.'],
+ ['6. Demonstrate','Answer the final ten questions to check your learning, then copy your summary to paste into Class Notebook.']
+];
+
+const dental=[
+ ['Which teeth at the very front of your mouth are shaped like little chisels and are great for biting into a crunchy apple?',['Molars','Incisors','Canines','Wisdom teeth'],1,'Incisors are your sharp front teeth used for cutting and biting food.'],
+ ['How long should you brush your pearly whites every time you clean them?',['10 seconds','2 minutes','5 minutes','30 seconds'],1,'The source lesson identifies two minutes as the target brushing time.'],
+ ['What is the super-tough, shiny outer armour that protects your teeth called?',['Frosting','Mud','Bubblegum','Enamel'],3,'Enamel is the hard outer covering that protects your teeth.'],
+ ['Which flat, wide teeth way in the back of your mouth act like little grinding stones for your food?',['Molars','Incisors','Canines','Baby teeth'],0,'Molars have flat tops that crush and grind food.'],
+ ['What tiny, invisible critters love to munch on leftover sugar stuck on your teeth and cause cavities?',['Friendly frogs','Bacteria','Butterflies','Silver fish'],1,'Bacteria can use sugars and produce acids that damage teeth.']
+];
+const finalQs=[
+ ['Which teeth are used for biting and cutting food?',['Molars','Incisors','Canines'],1,'Incisors are at the front and are used for biting.'],
+ ['What is the name of the hard outer covering of a tooth?',['Enamel','Pulp','Gum'],0,'Enamel protects the outside of the tooth.'],
+ ['How long does the lesson say you should brush your teeth?',['30 seconds','2 minutes','5 minutes'],1,'The lesson gives two minutes.'],
+ ['In the source presentation, how is the school Flu vaccine delivered?',['Nasal spray','Tablet','Cream'],0,'The source says it is delivered as a nasal spray each autumn.'],
+ ['According to the source presentation, which year group is listed for HPV?',['Year 7','Year 8','Year 9'],1,'At Laurel the HPV is offered for Year 8.'],
+ ['What does Year 9 school booster vaccincation protect against?',['Measles, mumps and rubella','Tetanus, diphtheria and polio','Flu and chickenpox'],1,'The source describes the 3-in-1 booster as protecting against tetanus, diphtheria and polio.'],
+ ['What is a communicable disease?',['A disease that can spread between people','An injury from sport','A broken bone'],0,'Communicable diseases can be transmitted from one person to another.'],
+ ['Which is a sensible way to reduce the spread of germs?',['Share used tissues','Cover coughs and sneezes and wash hands','Ignore hand hygiene'],1,'Good respiratory and hand hygiene can reduce the spread of infection.'],
+ ['Which activity is an example of aerobic activity from the lesson?',['Walking','Reading','Sleeping'],0,'Walking is one of the aerobic examples in the presentation.'],
+ ['Which activity is listed as a strengthening example?',['Press-ups','Watching television','Drawing'],0,'Press-ups are included in the strengthening examples.']
+];
+
+function save(){localStorage.setItem('hh_score',score);localStorage.setItem('hh_done',JSON.stringify(completed));updateStats()}
+
+function updateStats(){
+  let n = completed.filter(Boolean).length; 
+  $('score').textContent = score;
+  $('completed').textContent = n + '/6';
+  $('percent').textContent = Math.round(n / 6 * 100) + '%';
+  $('progressBar').style.width = (n / 6 * 100) + '%';
+  
+  // Sequential Unlocking logic
+  completed.forEach((v, i) => {
+    $('status' + i).textContent = v ? '✓ Completed' : 'Not started';
+    $('status' + i).className = v ? 'done' : '';
+    
+    let btn = $('btnM' + i);
+    // Unlocked if: it's the 1st mission, OR previous mission is complete, OR this mission is already complete
+    if (i === 0 || completed[i-1] || v) {
+        btn.disabled = false;
+        btn.textContent = v ? 'Review mission →' : 'Start mission →';
+    } else {
+        btn.disabled = true;
+        btn.textContent = '🔒 Locked';
+    }
+  });
+
+  // Main Page Certificate Button display
+  if(completed.every(Boolean)) {
+      $('mainCertContainer').style.display = 'block';
+  } else {
+      $('mainCertContainer').style.display = 'none';
+  }
+}
+
+function award(id,points=10){let key='hh_award_'+id;if(!localStorage.getItem(key)){score+=points;localStorage.setItem(key,'1');save();}}
+function markDone(i){completed[i]=true;save();}
+function openMission(i){current=i;$('activity').classList.add('active');$('missionLabel').textContent='MISSION '+(i+1);$('activityTitle').textContent=missionInfo[i][0];$('activityIntro').textContent=missionInfo[i][1];$('teacherPanel').classList.toggle('show',teacher);renderMission(i);$('activity').scrollIntoView({behavior:'smooth',block:'start'})}
+function closeMission(){$('activity').classList.remove('active')}
+
+function renderMission(i){
+  let c=$('activityContent');
+  if(i===0)renderQuiz(dental,'dental','m0');
+  if(i===1)renderVaccines();
+  if(i===2)renderGerms();
+  if(i===3)renderFitness();
+  if(i===4)renderChoices();
+  if(i===5)renderQuiz(finalQs,'final','m5');
+  renderTeacher();
+}
+
+function renderQuiz(qs, key, stateKey){
+  let c=$('activityContent');
+  c.innerHTML='';
+  let answered=0, correct=0;
+  
+  qs.forEach((q, qi) => {
+    let box = document.createElement('div');
+    box.className = 'question';
+    box.innerHTML = '<h3>Question '+(qi+1)+' of '+qs.length+'</h3><p>'+q[0]+'</p><div class="answers"></div><div class="feedback" id="'+key+'fb'+qi+'"></div>';
+    let ans = box.querySelector('.answers');
+    
+    let prevAns = state[stateKey][qi];
+
+    q[1].forEach((a, ai) => {
+      let b = document.createElement('button');
+      b.className = 'answer';
+      b.textContent = String.fromCharCode(65+ai)+'. '+a;
+
+      // Restore previously saved answer
+      if (prevAns === ai) {
+          box.dataset.answered = '1';
+          answered++;
+          let ok = (ai === q[2]);
+          if(ok) {
+              correct++;
+              b.classList.add('correct');
+          } else {
+              b.classList.add('wrong');
+              // Highlight the correct one too
+              setTimeout(() => { ans.children[q[2]].classList.add('correct'); }, 0);
+          }
+          let fb = $(key+'fb'+qi);
+          fb.textContent = (ok ? 'Correct! ' : 'Not quite. ') + q[3];
+          fb.classList.add('show');
+      }
+
+      b.onclick = () => {
+        if(box.dataset.answered) return;
+        box.dataset.answered = '1';
+        answered++;
+        
+        // Save answer state locally
+        state[stateKey][qi] = ai;
+        saveState();
+
+        let ok = (ai === q[2]);
+        if(ok){
+          correct++;
+          b.classList.add('correct');
+          award(key+'_'+qi, 10);
+        } else {
+          b.classList.add('wrong');
+          ans.children[q[2]].classList.add('correct');
+        }
+        
+        let fb = $(key+'fb'+qi);
+        fb.textContent = (ok ? 'Correct! ' : 'Not quite. ') + q[3];
+        fb.classList.add('show');
+        
+        checkQuizCompletion();
+      };
+      ans.appendChild(b);
+    });
+    c.appendChild(box);
+  });
+
+  checkQuizCompletion();
+
+  function checkQuizCompletion() {
+      if(answered === qs.length && !c.querySelector('.callout')) {
+          let result = document.createElement('div');
+          result.className = 'callout';
+          result.innerHTML = `<strong>Challenge complete: ${correct}/${qs.length} correct.</strong> ` + (correct === qs.length ? 'Perfect score!' : 'Review the explanations, then discuss any tricky questions.');
+          
+          if (key === 'final') {
+              result.innerHTML += `<div style="margin-top:16px;"><button onclick="openCertModal()">🏆 Open Certificate & Export</button></div>`;
+          }
+          c.appendChild(result);
+          markDone(current);
+      }
+  }
+}
+
+// Certificate / Notebook Export Logic
+function openCertModal() {
+    $('certModal').classList.add('show');
+    updateNotebookText();
+}
+function closeCertModal() {
+    $('certModal').classList.remove('show');
+}
+
+// Generate the text for the Class Notebook Export, now including the Fitness Factory table summary
+function updateNotebookText() {
+    let nameInput = $('pupilName');
+    let textArea = $('notebookText');
+    let n = completed.filter(Boolean).length;
+    let dateStr = new Date().toLocaleDateString('en-GB');
+    
+    let correctCount = 0;
+    let detailsText = "";
+
+    // Generate Final Quiz Details
+    finalQs.forEach((q, idx) => {
+        let ansIdx = state.m5[idx];
+        if (ansIdx !== undefined && ansIdx !== null) {
+            let isCorrect = (ansIdx === q[2]);
+            if (isCorrect) correctCount++;
+            
+            detailsText += "Q" + (idx + 1) + ": " + q[0] + "
+";
+            detailsText += "Your Answer: " + q[1][ansIdx] + (isCorrect ? " (✅ Correct)" : " (❌ Incorrect)") + "
+";
+            if (!isCorrect) {
+                detailsText += "Correct Answer: " + q[1][q[2]] + "
+";
+            }
+            detailsText += "
+";
+        }
+    });
+
+    // Generate Fitness Factory Table Summary
+    let fitnessSummary = "--- FITNESS FACTORY WEEKLY PLAN ---
+
+";
+    fitnessSummary += "DAY          ACTIVITY                 MINS
+";
+    fitnessSummary += "------------------------------------------
+";
+    
+    let days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    let totalMins = 0;
+    
+    if (state.m3 && state.m3.plan && state.m3.plan.length === 7) {
+        state.m3.plan.forEach((row, i) => {
+            let dayName = (days[i] + "         ").slice(0, 12);
+            
+            let actName = row.act ? row.act : "Rest Day";
+            actName = (actName + "                         ").slice(0, 24);
+            
+            let mins = row.mins ? parseInt(row.mins, 10) : 0;
+            totalMins += mins;
+            
+            let minsStr = (mins > 0) ? String(mins) : "-";
+            
+            fitnessSummary += `${dayName} ${actName} ${minsStr}
+`;
+        });
+    } else {
+        fitnessSummary += "No plan data saved.
+";
+    }
+    
+    fitnessSummary += "------------------------------------------
+";
+    fitnessSummary += `TOTAL WEEKLY ACTIVITY:             ${totalMins} mins
+
+`;
+
+    // Combine all sections for the final output
+    let txt = "========================================
+" +
+              "🏆 HEALTH HEROES RESULTS 🏆
+" +
+              "========================================
+" +
+              "Date: " + dateStr + "
+" +
+              "Pupil: " + (nameInput.value || "[Type your name]") + "
+" +
+              "Overall Score: " + score + " points
+" +
+              "Missions Completed: " + n + "/6
+" +
+              "Demonstrate Quiz Score: " + correctCount + "/" + finalQs.length + "
+" +
+              "========================================
+
+" +
+              fitnessSummary +
+              "--- DEMONSTRATE TASK ---
+
+" + detailsText;
+              
+    textArea.value = txt;
+}
+
+$('pupilName').addEventListener('input', updateNotebookText);
+
+window.copyNotebook = function() {
+    let textArea = $('notebookText');
+    textArea.select();
+    textArea.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(textArea.value).then(()=>{
+        $("copyMsg").style.display = "inline";
+        setTimeout(() => $("copyMsg").style.display = "none", 3000);
+    });
+}
+
+function renderVaccines(){
+ let c=$('activityContent');
+ c.innerHTML=`
+ <div class="callout"><strong>Source check:</strong> The following year-group information is reproduced from the supplied PowerPoint (labelled National Public Health Vaccines 2026/27). Please check the current school/NHS vaccination schedule before teaching or distributing this information.</div>
+ <div class="sort-grid">
+  <div class="question"><div style="font-size:2rem">💨</div><strong>Flu (Influenza)</strong><p>Source slide: nasal spray delivered in school each autumn (Year 7–Year 11).</p><p>Reason given: protection against serious illness and helping stop the virus spreading to vulnerable people.</p></div>
+  <div class="question"><div style="font-size:2rem">🛡️</div><strong>HPV</strong><p>Human Papillomavirus infections.</p><p>Source slide: injection to protect against genital warts and several types of cancer.</p></div>
+  <div class="question"><div style="font-size:2rem">💉</div><strong>SLB (3-in-1 school booster)</strong><p>Source slide: injection to protect against tetanus, diphtheria and polio.</p></div>
+ </div>
+ <div class="question"><h3>Quick check: Which vaccination does the source presentation list for Year 8?</h3><div class="answers" id="vaxAnswers"></div><div class="feedback" id="vaxFb"></div></div>
+ <div class="actions"><button onclick="markDone(1);award('vax_complete',10);this.textContent='✓ Mission completed'">Complete investigation (+10 points)</button></div>`;
+ 
+ let opts=['Flu only','HPV','SLB 3-in-1'];
+ opts.forEach((o,i) => {
+    let b = document.createElement('button');
+    b.className = 'answer';
+    b.textContent = o;
+    
+    if (state.m1 === i) {
+        let f = $('vaxFb');
+        f.textContent = i === 1 ? 'Correct! The source presentation lists HPV for Year 8.' : 'Check the Year 8 panel: it lists HPV.';
+        f.classList.add('show');
+        b.classList.add(i === 1 ? 'correct' : 'wrong');
+    }
+
+    b.onclick = () => {
+        state.m1 = i;
+        saveState();
+        let f=$('vaxFb');
+        f.textContent = i === 1 ? 'Correct! The source presentation lists HPV for Year 8.' : 'Check the Year 8 panel: it lists HPV.';
+        f.classList.add('show');
+        if(i===1){ b.classList.add('correct'); award('vax_q',10); } 
+        else { b.classList.add('wrong'); }
+    };
+    $('vaxAnswers').appendChild(b);
+ });
+}
+
+function renderGerms(){
+ let c=$('activityContent');
+ c.innerHTML=`
+ <div class="callout"><strong>Think, pair, share:</strong> Your PowerPoint asks: “What can you do at home and in school to protect yourself and others from communicable diseases?” Think of at least three ideas before revealing the suggestions.</div>
+ <div class="question"><h3>Choose the actions that can help reduce the spread of germs.</h3><div id="germChoices" class="chips"></div><div class="actions"><button onclick="checkGerms()">Check my choices</button></div><div class="feedback" id="germFb"></div></div>
+ <div class="question"><h3>Discuss the sneeze-distance video</h3><p>After watching the “Gross Science: How Far Do Sneezes and Vomit Travel?” clip from your PowerPoint, discuss:</p><ol><li>What surprised you?</li><li>How might germs travel from one person to another?</li><li>What could pupils do at home and at school to protect others?</li></ol></div>
+ <div class="actions"><button onclick="markDone(2);award('germs_done',10);this.textContent='✓ Mission completed'">Complete mission (+10 points)</button></div>`;
+ 
+ let items=['Wash hands with soap','Cover coughs and sneezes','Put used tissues in a bin','Share used tissues','Clean frequently touched surfaces','Ignore hand hygiene'];
+ items.forEach((x,i)=>{
+    let b = document.createElement('button');
+    b.className = 'chip';
+    b.textContent = x;
+    b.dataset.i = i;
+    
+    if(state.m2.includes(i)) b.classList.add('selected');
+    
+    b.onclick = () => {
+        b.classList.toggle('selected');
+        state.m2 = [...document.querySelectorAll('#germChoices .selected')].map(el => +el.dataset.i);
+        saveState();
+    };
+    $('germChoices').appendChild(b);
+ });
+}
+
+function checkGerms(){
+    let chosen = state.m2;
+    let right = [0,1,2,4];
+    let ok = (chosen.length === right.length && right.every(x => chosen.includes(x)));
+    
+    $('germFb').textContent = ok ? 'Excellent! You selected all four helpful actions and avoided the unhelpful choices.' : 'Have another look. Select the helpful actions only: washing hands, covering coughs and sneezes, binning used tissues and cleaning frequently touched surfaces.';
+    $('germFb').classList.add('show');
+    if(ok) award('germ_sort',15);
+}
+
+// ----------------- DRAG AND DROP FITNESS LOGIC ----------------- //
+const dragActivities = [
+    {id:'d1', name:'Walking'}, {id:'d2', name:'Walking the dog'}, {id:'d3', name:'Running'},
+    {id:'d4', name:'Swimming'}, {id:'d5', name:'Cycling'}, {id:'d6', name:'Dancing'},
+    {id:'d7', name:'Skipping'}, {id:'d8', name:'Tennis'}, {id:'d9', name:'PE'},
+    {id:'d10', name:'Gymnastics'}, {id:'d11', name:'Martial arts'}, {id:'d12', name:'Sit-ups'},
+    {id:'d13', name:'Press-ups'}, 
+    {id:'d14', name:'Football'}, {id:'d15', name:'Football'}, // Duplicate for both boxes
+    {id:'d16', name:'Jumping'}, {id:'d17', name:'Jumping'}    // Duplicate for both boxes
+];
+
+// Names for accurate validation regardless of chip ID
+const aerobicNames = ['Walking','Walking the dog','Running','Swimming','Cycling','Dancing','Skipping','Football','Tennis','Jumping','PE'];
+const strengthNames = ['Gymnastics','Martial arts','Sit-ups','Press-ups','Football','Jumping'];
+
+function renderFitness(){
+ let c=$('activityContent');
+ c.innerHTML=`
+ <div class="callout" style="background:#17243a; border-left-color:var(--cyan);">
+    <strong>Instructions:</strong> Drag and drop the activities into the correct boxes below. <br>
+    <em>Note: Football and Jumping appear twice because they belong in both boxes!</em><br>
+    (Made a mistake? Click an item inside a box to throw it back here).
+ </div>
+ <div id="activityPool" class="chips" style="background:#101c2d; padding:16px; border-radius:12px; border:1px solid #3b506d; min-height:80px;" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)"></div>
+ 
+ <div class="sort-grid">
+    <div class="sort-bin" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+        <h3>🏃 Aerobic</h3>
+        <div id="aerobicBin" class="chips" style="min-height:120px;"></div>
+    </div>
+    <div class="sort-bin" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+        <h3>💪 Strengthening</h3>
+        <div id="strengthBin" class="chips" style="min-height:120px;"></div>
+    </div>
+ </div>
+ 
+ <div class="actions"><button class="secondary" onclick="checkSort()">Check sorting</button><span id="sortFeedback" class="small" style="line-height:44px;"></span></div>
+ 
+ <hr style="border-color:var(--line);margin:24px 0">
+ <h3>📅 Plan your week</h3><p class="small">Add an activity and the number of minutes you plan to do it. The lesson slide says: “60 mins. of moderate-vigorous activity (20 mins. on 3 days).”</p>
+ <div class="plan"><table><thead><tr><th>Day</th><th>Activity</th><th>Minutes</th></tr></thead><tbody id="weekRows"></tbody></table></div>
+ <p><strong>Total planned minutes: <span id="totalMins">0</span></strong></p><div class="actions"><button onclick="savePlan()">Save my plan (+10 points)</button></div><div class="feedback" id="planFb"></div>`;
+ 
+ // Restore Chips State
+ if (!state.m3.bins) {
+     let shuffled = [...dragActivities].sort(() => Math.random() - 0.5);
+     shuffled.forEach(a => $('activityPool').appendChild(createChip(a)));
+ } else {
+     state.m3.bins.pool.forEach(id => { let a=dragActivities.find(x=>x.id===id); if(a) $('activityPool').appendChild(createChip(a)); });
+     state.m3.bins.aerobic.forEach(id => { let a=dragActivities.find(x=>x.id===id); if(a) $('aerobicBin').appendChild(createChip(a)); });
+     state.m3.bins.strength.forEach(id => { let a=dragActivities.find(x=>x.id===id); if(a) $('strengthBin').appendChild(createChip(a)); });
+ }
+ 
+ // Restore Planner State
+ const selectOptions = ['Walking','Walking the dog','Running','Swimming','Cycling','Dancing','Skipping','Football','Tennis','Gymnastics','Martial arts','Sit-ups','Press-ups','Jumping','PE'];
+ ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].forEach((d, i)=>{
+    let savedRow = state.m3.plan[i] || { act: '', mins: 0 };
+    let tr=document.createElement('tr');
+    tr.innerHTML='<td>'+d+'</td><td><select onchange="saveFitnessState()" aria-label="'+d+' activity"><option value="">Choose activity</option>'+selectOptions.map(a=>'<option '+(savedRow.act===a?'selected':'')+'>'+a+'</option>').join('')+'</select></td><td><input type="number" min="0" max="300" value="'+savedRow.mins+'" aria-label="'+d+' minutes" oninput="updateTotal(); saveFitnessState();"></td>';
+    $('weekRows').appendChild(tr);
+ });
+ updateTotal();
+}
+
+function createChip(a) {
+    let b = document.createElement('div');
+    b.className = 'chip';
+    b.id = a.id;
+    b.textContent = a.name;
+    b.draggable = true;
+    b.ondragstart = (ev) => ev.dataTransfer.setData("text", ev.target.id);
+    b.onclick = function() {
+        if(this.parentElement.id !== 'activityPool') {
+            $('activityPool').appendChild(this);
+            $('sortFeedback').textContent = ''; // clear feedback on modification
+            saveFitnessState();
+        }
+    };
+    return b;
+}
+
+function saveFitnessState() {
+   state.m3.bins = {
+      pool: [...$('activityPool').children].map(c=>c.id),
+      aerobic: [...$('aerobicBin').children].map(c=>c.id),
+      strength: [...$('strengthBin').children].map(c=>c.id)
+   };
+   state.m3.plan = [...document.querySelectorAll('#weekRows tr')].map(tr => ({
+      act: tr.querySelector('select').value,
+      mins: tr.querySelector('input').value
+   }));
+   saveState();
+}
+
+window.allowDrop = (ev) => ev.preventDefault();
+window.dragEnter = (ev) => {
+    let bin = ev.target.closest('.sort-bin');
+    if(bin) bin.classList.add('drag-over');
+};
+window.dragLeave = (ev) => {
+    let bin = ev.target.closest('.sort-bin');
+    if(bin && ev.target === bin) bin.classList.remove('drag-over');
+};
+window.drop = (ev) => {
+    ev.preventDefault();
+    document.querySelectorAll('.sort-bin').forEach(bin => bin.classList.remove('drag-over'));
+    
+    let data = ev.dataTransfer.getData("text");
+    let el = document.getElementById(data);
+    if (!el) return;
+    
+    let dropZone;
+    if (ev.target.id === 'activityPool' || ev.target.id === 'aerobicBin' || ev.target.id === 'strengthBin') {
+        dropZone = ev.target;
+    } else if (ev.target.closest('.sort-bin')) {
+        dropZone = ev.target.closest('.sort-bin').querySelector('.chips');
+    }
+    
+    if (dropZone) {
+        dropZone.appendChild(el);
+        $('sortFeedback').textContent = ''; // clear feedback on modification
+        saveFitnessState();
+    }
+};
+
+function checkSort(){
+    let poolNodes = [...$('activityPool').querySelectorAll('.chip')];
+    if(poolNodes.length > 0) {
+        $('sortFeedback').textContent = 'Please sort all activities out of the starting box first!';
+        return;
+    }
+    
+    let aNodes = [...$('aerobicBin').querySelectorAll('.chip')].map(x => x.textContent);
+    let sNodes = [...$('strengthBin').querySelectorAll('.chip')].map(x => x.textContent);
+    
+    let ok = true;
+    aNodes.forEach(n => { if(!aerobicNames.includes(n)) ok = false; });
+    sNodes.forEach(n => { if(!strengthNames.includes(n)) ok = false; });
+    
+    if(ok){
+        $('sortFeedback').textContent = 'Great sorting! (+15 points)';
+        award('fitness_sort', 15);
+    } else {
+        $('sortFeedback').textContent = 'Some activities are in the wrong category. Click an item to remove it and try again!';
+    }
+}
+
+function updateTotal(){let n=[...document.querySelectorAll('#weekRows input')].reduce((s,x)=>s+(+x.value||0),0);$('totalMins').textContent=n}
+function savePlan(){let rows=[...document.querySelectorAll('#weekRows tr')],filled=rows.some(r=>r.querySelector('select').value&&+r.querySelector('input').value>0);$('planFb').textContent=filled?'Plan saved on this device. Discuss whether it is balanced and realistic.':'Add at least one activity and a number of minutes first.';$('planFb').classList.add('show');if(filled){award('fitness_plan',10);markDone(3)}}
+
+function renderChoices(){
+ let c=$('activityContent');
+ c.innerHTML = '';
+ let data=[
+ ['You spend most of the evening gaming. What could help you balance your day?',['Never play games again','Plan breaks and make time for movement','Skip sleep to fit in exercise'],1,'A balanced routine can include enjoyable screen time, breaks, sleep and physical activity.'],
+ ['You regularly skip breakfast and feel hungry in the morning. What is a sensible next step?',['Talk to a trusted adult about a breakfast routine','Ignore hunger every day','Only drink fizzy drinks'],0,'Planning a breakfast that works for you can help establish a regular routine.'],
+ ['You feel tired during PE. What could you do?',['Keep it secret and push through anything','Tell your teacher and think about rest, hydration and routine','Stop being active forever'],1,'Tell a trusted adult or teacher if you feel unwell. Rest, hydration and a balanced routine matter.'],
+ ['You want to become more active. What is a good starting point?',['Choose an activity you enjoy and build it into your week','Try to do everything at once','Only exercise once a year'],0,'A realistic plan built around activities you enjoy is easier to maintain.']
+ ];
+ 
+ data.forEach((q,i)=>{
+    let d=document.createElement('div');
+    d.className='scenario';
+    d.innerHTML='<h3>Scenario '+(i+1)+'</h3><p>'+q[0]+'</p>';
+    
+    let prevAns = state.m4[i];
+    
+    q[1].forEach((o,j)=>{
+        let b=document.createElement('button');
+        b.className='secondary';
+        b.textContent=o;
+        
+        if(prevAns === j) {
+            d.dataset.done = '1';
+        }
+        
+        b.onclick=()=>{
+            if(d.dataset.done) return;
+            d.dataset.done = '1';
+            
+            state.m4[i] = j; saveState();
+            
+            let r=d.querySelector('.response');
+            r.textContent=(j===q[2]?'Good choice! ':'Think about this choice. ')+q[3];
+            r.classList.add('show');
+            if(j===q[2]) award('scenario_'+i,10);
+            
+            checkScenariosCompletion();
+        };
+        d.appendChild(b);
+    });
+    
+    let r=document.createElement('div');
+    r.className='response';
+    if(prevAns !== undefined) {
+        r.textContent = (prevAns === q[2] ? 'Good choice! ' : 'Think about this choice. ') + q[3];
+        r.classList.add('show');
+    }
+    d.appendChild(r);
+    c.appendChild(d);
+ });
+ 
+ c.insertAdjacentHTML('beforeend','<div class="actions"><button onclick="markDone(4);award('choices_done',10);this.textContent='✓ Mission completed'">Complete mission (+10 points)</button></div>');
+}
+function checkScenariosCompletion() { /* purely for potential auto-completion */ }
+
+function renderTeacher(){
+  let t=$('teacherContent');
+  if(!t)return;
+  let notes=[
+    'Answers: Q1 Incisors; Q2 2 minutes; Q3 Enamel; Q4 Molars; Q5 Bacteria. Use the feedback to correct misconceptions.',
+    'The supplied PowerPoint lists: Year 7 Flu; Year 8 Flu + HPV; Year 9 Flu + SLB/Men. It describes Flu as a nasal spray, HPV as an injection, and SLB as a 3-in-1 booster. Verify the current local/NHS schedule before delivery.',
+    'Prompt pupils to suggest hand hygiene, covering coughs/sneezes, disposing of tissues and cleaning frequently touched surfaces. Use the PBS “Gross Science” clip referenced in the slide deck.',
+    'The supplied slide gives aerobic examples (walking, dog walking, playground activities, PE, football/tennis, swimming, skipping, dancing, skateboarding/rollerblading, cycling) and strengthening examples (gymnastics, football, jumping, martial arts, sit-ups, press-ups). The slide wording about “60 mins” and “20 mins on 3 days” needs clarification before teaching.',
+    'Encourage supportive, non-judgemental discussion. Avoid asking pupils to disclose personal or family health information. Signpost concerns through school safeguarding procedures.',
+    'Final quiz answers are shown in the feedback after each question. Use results to identify topics needing reteaching.'
+  ];
+  
+  t.innerHTML = `<p><strong>Lesson objective:</strong> To learn how to keep yourself fit and healthy.</p><p><strong>Suggested lesson sequence:</strong> Super Smile 5–8 min; Vaccine Detectives 8 min; Stop the Germs 8–10 min; Fitness Factory 10–12 min; Healthy Choices 8–10 min; Final Challenge 5–7 min; plenary 5 min. Adapt timings to your class.</p>${notes[current]}<div class="callout"><strong>Safeguarding reminder:</strong> Keep discussion general and inclusive. Do not invite pupils to disclose medical details or vaccination status. Follow your school's safeguarding and health education policies.</div>`;
+}
+
+$('teacherToggle').onclick=()=>{teacher=!teacher;$('teacherToggle').textContent=teacher?'👩‍🏫 Teacher mode: ON':'👩‍🏫 Teacher mode';$('teacherPanel').classList.toggle('show',teacher);if(current>=0)renderTeacher()};
+$('resetBtn').onclick=()=>{if(confirm('Reset all Health Heroes scores and mission progress on this device?')){
+    score=0;
+    completed=[false,false,false,false,false,false];
+    state = { m0: [], m1: -1, m2: [], m3: { bins: null, plan: [] }, m4: [], m5: [] };
+    Object.keys(localStorage).filter(k=>k.startsWith('hh_')).forEach(k=>localStorage.removeItem(k));
+    save();
+    $('certModal').classList.remove('show');
+    if(current>=0) renderMission(current);
+}};
+
+updateStats();
+</script>
+</body></html>

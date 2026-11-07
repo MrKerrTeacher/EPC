@@ -122,7 +122,7 @@ button:disabled{background:#2a3a50;color:#6a82a0;cursor:not-allowed;box-shadow:n
    </div>
  </div>
  <div style="text-align: center; width: 100%; margin-top: 10px;">
-   <img src="image_ba9929.jpg" alt="Learning Journey Pathway" style="max-width: 100%; border-radius: 16px; border: 2px solid #49617e; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+   <img src="LJ.jpg" alt="Learning Journey Pathway" style="max-width: 100%; border-radius: 16px; border: 2px solid #49617e; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
  </div>
 </section>
 
@@ -151,7 +151,7 @@ button:disabled{background:#2a3a50;color:#6a82a0;cursor:not-allowed;box-shadow:n
         <h2 style="color:var(--lime); margin-top:0;">📓 Class Notebook Export</h2>
         <p style="margin-bottom:14px;">Type your name below to generate your final summary, then click the button to copy it so you can paste it directly into your Class Notebook.</p>
         <input type="text" id="pupilName" placeholder="Enter your name" style="margin-bottom:14px; padding:10px; width:100%; max-width:300px; border-radius:8px; border:1px solid #526783; background:#101c2d; color:white; font-size:1rem;">
-        <textarea id="notebookText" rows="12" style="width:100%; padding:14px; border-radius:8px; border:1px solid #526783; background:#101c2d; color:white; margin-bottom:14px; font-family:monospace; font-size:1rem; resize:vertical;" readonly></textarea>
+        <textarea id="notebookText" rows="20" style="width:100%; padding:14px; border-radius:8px; border:1px solid #526783; background:#101c2d; color:white; margin-bottom:14px; font-family:monospace; font-size:1rem; resize:vertical;" readonly></textarea>
         <div style="display:flex; gap:10px; align-items:center;">
             <button onclick="copyNotebook()">📋 Copy to Clipboard</button>
             <button class="secondary" onclick="closeCertModal()">✕ Close</button>
@@ -349,8 +349,6 @@ function openCertModal() {
 function closeCertModal() {
     $('certModal').classList.remove('show');
 }
-
-// Generate the text for the Class Notebook Export, now including the Fitness Factory table summary
 function updateNotebookText() {
     let nameInput = $('pupilName');
     let textArea = $('notebookText');
@@ -367,27 +365,19 @@ function updateNotebookText() {
             let isCorrect = (ansIdx === q[2]);
             if (isCorrect) correctCount++;
             
-            detailsText += "Q" + (idx + 1) + ": " + q[0] + "
-";
-            detailsText += "Your Answer: " + q[1][ansIdx] + (isCorrect ? " (✅ Correct)" : " (❌ Incorrect)") + "
-";
+            detailsText += "Q" + (idx + 1) + ": " + q[0] + "\n";
+            detailsText += "Your Answer: " + q[1][ansIdx] + (isCorrect ? " (✅ Correct)" : " (❌ Incorrect)") + "\n";
             if (!isCorrect) {
-                detailsText += "Correct Answer: " + q[1][q[2]] + "
-";
+                detailsText += "Correct Answer: " + q[1][q[2]] + "\n";
             }
-            detailsText += "
-";
+            detailsText += "\n";
         }
     });
 
     // Generate Fitness Factory Table Summary
-    let fitnessSummary = "--- FITNESS FACTORY WEEKLY PLAN ---
-
-";
-    fitnessSummary += "DAY          ACTIVITY                 MINS
-";
-    fitnessSummary += "------------------------------------------
-";
+    let fitnessSummary = "--- FITNESS FACTORY WEEKLY PLAN ---\n\n";
+    fitnessSummary += "DAY          ACTIVITY                 MINS\n";
+    fitnessSummary += "------------------------------------------\n";
     
     let days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     let totalMins = 0;
@@ -395,57 +385,37 @@ function updateNotebookText() {
     if (state.m3 && state.m3.plan && state.m3.plan.length === 7) {
         state.m3.plan.forEach((row, i) => {
             let dayName = (days[i] + "         ").slice(0, 12);
-            
-            let actName = row.act ? row.act : "Rest Day";
+            let mins = row.mins ? parseInt(row.mins, 10) : 0;
+            let actName = (row.act && mins > 0) ? row.act : "Rest Day";
             actName = (actName + "                         ").slice(0, 24);
             
-            let mins = row.mins ? parseInt(row.mins, 10) : 0;
             totalMins += mins;
-            
             let minsStr = (mins > 0) ? String(mins) : "-";
             
-            fitnessSummary += `${dayName} ${actName} ${minsStr}
-`;
+            fitnessSummary += `${dayName} ${actName} ${minsStr}\n`;
         });
     } else {
-        fitnessSummary += "No plan data saved.
-";
+        fitnessSummary += "No plan data saved.\n";
     }
     
-    fitnessSummary += "------------------------------------------
-";
-    fitnessSummary += `TOTAL WEEKLY ACTIVITY:             ${totalMins} mins
-
-`;
+    fitnessSummary += "------------------------------------------\n";
+    fitnessSummary += `TOTAL WEEKLY ACTIVITY:             ${totalMins} mins\n\n`;
 
     // Combine all sections for the final output
-    let txt = "========================================
-" +
-              "🏆 HEALTH HEROES RESULTS 🏆
-" +
-              "========================================
-" +
-              "Date: " + dateStr + "
-" +
-              "Pupil: " + (nameInput.value || "[Type your name]") + "
-" +
-              "Overall Score: " + score + " points
-" +
-              "Missions Completed: " + n + "/6
-" +
-              "Demonstrate Quiz Score: " + correctCount + "/" + finalQs.length + "
-" +
-              "========================================
-
-" +
+    let txt = "========================================\n" +
+              "🏆 HEALTH HEROES RESULTS 🏆\n" +
+              "========================================\n" +
+              "Date: " + dateStr + "\n" +
+              "Pupil: " + (nameInput.value || "[Type your name]") + "\n" +
+              "Overall Score: " + score + " points\n" +
+              "Missions Completed: " + n + "/6\n" +
+              "Demonstrate Quiz Score: " + correctCount + "/" + finalQs.length + "\n" +
+              "========================================\n\n" +
               fitnessSummary +
-              "--- DEMONSTRATE TASK ---
-
-" + detailsText;
+              "--- DEMONSTRATE TASK ---\n\n" + detailsText;
               
     textArea.value = txt;
 }
-
 $('pupilName').addEventListener('input', updateNotebookText);
 
 window.copyNotebook = function() {
@@ -718,8 +688,6 @@ function renderChoices(){
             r.textContent=(j===q[2]?'Good choice! ':'Think about this choice. ')+q[3];
             r.classList.add('show');
             if(j===q[2]) award('scenario_'+i,10);
-            
-            checkScenariosCompletion();
         };
         d.appendChild(b);
     });
@@ -734,9 +702,8 @@ function renderChoices(){
     c.appendChild(d);
  });
  
- c.insertAdjacentHTML('beforeend','<div class="actions"><button onclick="markDone(4);award('choices_done',10);this.textContent='✓ Mission completed'">Complete mission (+10 points)</button></div>');
+ c.insertAdjacentHTML('beforeend', `<div class="actions"><button onclick="markDone(4);award('choices_done',10);this.textContent='✓ Mission completed'">Complete mission (+10 points)</button></div>`);
 }
-function checkScenariosCompletion() { /* purely for potential auto-completion */ }
 
 function renderTeacher(){
   let t=$('teacherContent');

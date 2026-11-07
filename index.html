@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>This Week's Resources | The Laurel</title>
+<style>
+:root{--bg:#101827;--panel:#1b2940;--ink:#f4f7fb;--muted:#b9c7d9;--lime:#a8e65b;--cyan:#62d8e8;--line:#3b506d}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 10% 0%,#203657 0,transparent 34%),var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px}
+.container{max-width:950px;width:100%;}
+.header{text-align:center;margin-bottom:40px;}
+.logo-container{display:inline-block;background:white;padding:15px 30px;border-radius:16px;margin-bottom:20px;box-shadow:0 8px 16px rgba(0,0,0,0.2);}
+.logo-container img{height:50px;display:block;object-fit:contain;}
+h1{font-size:clamp(2rem, 5vw, 3rem);margin:0 0 10px;font-weight:800;letter-spacing:-0.02em;}
+p.subtitle{color:var(--muted);font-size:1.1rem;margin:0;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:40px;}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:32px 24px;text-align:center;transition:all 0.2s ease;text-decoration:none;color:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:240px;box-shadow:0 4px 12px rgba(0,0,0,0.15);}
+.card:hover{transform:translateY(-5px);border-color:var(--lime);box-shadow:0 12px 24px rgba(0,0,0,0.3);}
+.card .badge{background:#263b55;color:var(--cyan);padding:6px 14px;border-radius:20px;font-size:0.85rem;font-weight:800;margin-bottom:16px;letter-spacing:0.1em;}
+.card h2{margin:0 0 12px;font-size:1.4rem;color:var(--ink);line-height:1.3;}
+.card p{color:var(--muted);margin:0;font-size:0.95rem;line-height:1.5;flex-grow:1;}
+.btn{margin-top:24px;background:var(--lime);color:#152019;padding:12px 24px;border-radius:12px;font-weight:750;text-decoration:none;transition:filter 0.2s;width:100%;}
+.card:hover .btn{filter:brightness(1.1);}
+.disabled{opacity:0.6;pointer-events:none;}
+.disabled .btn{background:#3b506d;color:#8ca3c2;}
+.disabled:hover{transform:none;border-color:var(--line);box-shadow:0 4px 12px rgba(0,0,0,0.15);}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="logo-container">
+            <img src="TheLaurel_DELTA_Cropped.png" alt="The Laurel Delta">
+        </div>
+        <h1>This Week's Resources</h1>
+        <p class="subtitle">Select your year group below to access your interactive lessons and materials.</p>
+    </div>
+    
+    <div class="grid">
+        <a href="HT2L_health-heroes-year7_2.html" class="card">
+            <span class="badge">YEAR 7</span>
+            <h2>Physical Health & Wellbeing</h2>
+            <p>Complete the Health Heroes missions to build healthy habits and earn your certificate.</p>
+            <span class="btn">Open Lesson →</span>
+        </a>
+        
+        <a href="#" class="card disabled" aria-disabled="true">
+            <span class="badge">YEAR 9</span>
+            <h2>Coming Soon</h2>
+            <p>This week's interactive resource is currently being prepared by your teacher.</p>
+            <span class="btn">Check Back Later</span>
+        </a>
+        
+        <a href="#" class="card disabled" aria-disabled="true">
+            <span class="badge">YEAR 10</span>
+            <h2>Coming Soon</h2>
+            <p>This week's interactive resource is currently being prepared by your teacher.</p>
+            <span class="btn">Check Back Later</span>
+        </a>
+    </div>
+</div>
+</body>
+</html>

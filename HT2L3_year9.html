@@ -121,7 +121,6 @@ button:disabled{background:#2a3a50;color:#6a82a0;cursor:not-allowed;box-shadow:n
    </div>
  </div>
  <div style="text-align: center; width: 100%; margin-top: 10px;">
-   <!-- Assuming the Y9 image path is the same style, if you have a specific Y9 image, replace "LJ.jpg" with it -->
    <img src="LJ.jpg" alt="Learning Journey Pathway" style="max-width: 100%; border-radius: 16px; border: 2px solid #49617e; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
  </div>
 </section>
@@ -187,18 +186,18 @@ const missionInfo=[
 ];
 
 const recallQs=[
- ['Which of the following is a characteristic of a healthy relationship?',['Controlling behaviour','Trust and respect','Ignoring boundaries','Keeping secrets from friends'],1,'Trust, respect, listening, and patience are key characteristics of a healthy relationship.'],
- ['Why does identity matter?',['It gives a clear sense of who you are and builds confidence','It allows you to copy other people exactly','It means you never change your mind','It makes you better than everyone else'],0,'Identity gives a sense of self, builds self-esteem, and helps you feel secure.'],
- ['Which is good advice for physical wellbeing?',['Stay up late on your phone','Drink plenty of sugary drinks','Get regular exercise and 8-10 hours of sleep','Skip meals if you are busy'],2,'Regular exercise, a balanced diet, hydration, and good sleep are essential.'],
- ['Why is it important for young people to learn about health?',['So they can become doctors immediately','To make choices that are good for them and stay well','Because it is the only way to pass exams','So they never get sick ever again'],1,'Learning about health helps young people make informed choices and feel better.']
+ ["Which of the following is a characteristic of a healthy relationship?",["Controlling behaviour","Trust and respect","Ignoring boundaries","Keeping secrets from friends"],1,"Trust, respect, listening, and patience are key characteristics of a healthy relationship."],
+ ["Why does identity matter?",["It gives a clear sense of who you are and builds confidence","It allows you to copy other people exactly","It means you never change your mind","It makes you better than everyone else"],0,"Identity gives a sense of self, builds self-esteem, and helps you feel secure."],
+ ["Which is good advice for physical wellbeing?",["Stay up late on your phone","Drink plenty of sugary drinks","Get regular exercise and 8-10 hours of sleep","Skip meals if you are busy"],2,"Regular exercise, a balanced diet, hydration, and good sleep are essential."],
+ ["Why is it important for young people to learn about health?",["So they can become doctors immediately","To make choices that are good for them and stay well","Because it is the only way to pass exams","So they never get sick ever again"],1,"Learning about health helps young people make informed choices and feel better."]
 ];
 
 const rightWrongQs=[
- ['Lying to your partner about something important',['Wrong','Right','Depends'],0,'Honesty and trust are fundamental to a healthy relationship.'],
- ['Sharing a private photo someone sent you',['Wrong','Right','Depends'],0,'This breaks trust, violates privacy, and is often illegal (e.g. if under 18 or done maliciously).'],
- ['Checking your partner's phone without permission',['Wrong','Right','Depends'],0,'This shows a lack of trust and is an invasion of privacy.'],
- ['Ending a relationship because your feelings have changed',['Wrong','Right','Depends'],1,'It is okay to end a relationship if you want to. You have autonomy over your choices.'],
- ['Making jokes about someone's sexual reputation',['Wrong','Right','Depends'],0,'This is disrespectful, harmful, and can be a form of bullying or harassment.']
+ ["Lying to your partner about something important",["Wrong","Right","Depends"],0,"Honesty and trust are fundamental to a healthy relationship."],
+ ["Sharing a private photo someone sent you",["Wrong","Right","Depends"],0,"This breaks trust, violates privacy, and is often illegal (e.g. if under 18 or done maliciously)."],
+ ["Checking your partner's phone without permission",["Wrong","Right","Depends"],0,"This shows a lack of trust and is an invasion of privacy."],
+ ["Ending a relationship because your feelings have changed",["Wrong","Right","Depends"],1,"It is okay to end a relationship if you want to. You have autonomy over your choices."],
+ ["Making jokes about someone's sexual reputation",["Wrong","Right","Depends"],0,"This is disrespectful, harmful, and can be a form of bullying or harassment."]
 ];
 
 function save(){
@@ -609,47 +608,35 @@ function updateNotebookText() {
         if (state.m0[idx] === q[2]) m1Score++;
     });
 
-    let txt = "========================================
-" +
-              "🏆 HEALTH HEROES: SEXUAL ETHICS RESULTS 🏆
-" +
-              "========================================
-" +
-              "Date: " + dateStr + "
-" +
-              "Pupil: " + (nameInput.value || "[Type your name]") + "
-" +
-              "Overall Score: " + score + " points
-" +
-              "Missions Completed: " + n + "/5
-" +
-              "Recall Quiz Score: " + m1Score + "/" + recallQs.length + "
-" +
-              "========================================
+    let txt = `========================================
+🏆 HEALTH HEROES: SEXUAL ETHICS RESULTS 🏆
+========================================
+Date: ${dateStr}
+Pupil: ${nameInput.value || "[Type your name]"}
+Overall Score: ${score} points
+Missions Completed: ${n}/5
+Recall Quiz Score: ${m1Score}/${recallQs.length}
+========================================
 
-";
+`;
 
     if (state.m2 && state.m2.length === 2) {
-        txt += "--- SCENARIO RESPONSES ---
+        txt += `--- SCENARIO RESPONSES ---
 
-";
-        txt += "Consent & Autonomy:
-" + (state.m2[0] || "No response provided.") + "
+Consent & Autonomy:
+${state.m2[0] || "No response provided."}
 
-";
-        txt += "Digital Respect:
-" + (state.m2[1] || "No response provided.") + "
+Digital Respect:
+${state.m2[1] || "No response provided."}
 
-";
-        txt += "========================================
+========================================
 
-";
+`;
     }
     
-    txt += "--- DEMONSTRATE: ADVICE LETTER ---
+    txt += `--- DEMONSTRATE: ADVICE LETTER ---
 
-";
-    txt += state.m4 || "No letter provided.";
+${state.m4 || "No letter provided."}`;
               
     textArea.value = txt;
 }

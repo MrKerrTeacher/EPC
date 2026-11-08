@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Health Heroes | Year 9 Sexual Ethics</title>
+<style>
+:root{--bg:#101827;--panel:#1b2940;--panel2:#243650;--ink:#f4f7fb;--muted:#b9c7d9;--lime:#a8e65b;--cyan:#62d8e8;--orange:#ffb454;--pink:#ff7f9e;--good:#5bd69a;--bad:#ff8291;--line:#3b506d}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 10% 0%,#203657 0,transparent 34%),var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:11px 16px;font-weight:750;background:var(--lime);color:#152019;transition:.15s}
+button:hover:not(:disabled){filter:brightness(1.08);transform:translateY(-1px)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+button:disabled{background:#2a3a50;color:#6a82a0;cursor:not-allowed;box-shadow:none;transform:none;}
+.secondary{background:#344b69;color:white;border:1px solid #536987}
+.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.danger{background:#6d3042;color:white}
+.wrap{max-width:1120px;margin:auto;padding:22px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{border-radius:16px;padding:10px 14px;background:white;display:flex;align-items:center;justify-content:center}
+.eyebrow{color:var(--lime);font-size:.78rem;font-weight:850;letter-spacing:.14em;text-transform:uppercase}
+.brand h1{margin:0;font-size:clamp(1.35rem,3vw,2rem);line-height:1.15}
+.brand p{margin:3px 0;color:var(--muted);font-size:.9rem}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.hero{margin:24px 0 18px;padding:26px;border-radius:24px;background:linear-gradient(120deg,#25425e,#293c59 58%,#3b3c63);border:1px solid #49617e;display:flex;flex-direction:column;gap:24px}
+.hero h2{font-size:clamp(1.8rem,4vw,3rem);line-height:1.05;margin:8px 0}
+.hero p{color:#d7e3f2;max-width:800px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.stat{background:#17263b;border:1px solid #4c6380;border-radius:12px;padding:8px 12px;font-weight:700}
+.stat span{color:var(--lime);font-variant-numeric:tabular-nums}
+.progress{height:10px;background:#0d1727;border-radius:20px;overflow:hidden;margin-top:12px}
+.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--lime),var(--cyan));transition:width .3s}
+.section-title{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:28px 0 12px}
+.section-title h2{margin:0;font-size:1.4rem}
+.section-title p{margin:0;color:var(--muted);font-size:.9rem}
+.missions{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.mission{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;min-height:205px}
+.mission .emoji{font-size:2.25rem}
+.mission h3{margin:8px 0 4px}
+.mission p{color:var(--muted);margin:0 0 14px;font-size:.93rem;flex:1}
+.mission .meta{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.82rem;margin-bottom:12px;}
+.done{color:var(--good);font-weight:800}
+.activity{display:none;margin-top:24px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:clamp(16px,3vw,28px)}
+.activity.active{display:block}
+.activity-head{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap}
+.activity h2{font-size:clamp(1.5rem,3vw,2rem);margin:4px 0}
+.activity-intro{color:var(--muted);max-width:800px}
+.pill{display:inline-block;border:1px solid #526b88;color:var(--cyan);border-radius:99px;padding:4px 10px;font-size:.8rem;font-weight:800}
+.question{margin:18px 0;padding:17px;border:1px solid var(--line);border-radius:16px;background:#17243a}
+.question h3{margin:0 0 12px;font-size:1.05rem}
+.answers{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.answer{background:#2b405c;color:white;text-align:left;border:1px solid #506785}
+.answer.correct{background:#1e684f;border-color:var(--good)}
+.answer.wrong{background:#713b4b;border-color:var(--bad)}
+.feedback{margin-top:10px;padding:10px 12px;border-radius:10px;background:#102a35;color:#ccecf0;display:none}
+.feedback.show{display:block}
+.small{font-size:.88rem;color:var(--muted)}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+.callout{background:#263b55;border-left:4px solid var(--orange);padding:13px 15px;border-radius:10px;margin:14px 0}
+.sort-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sort-bin{border:2px dashed #607997;border-radius:16px;padding:14px;min-height:185px;background:#17243a;transition:0.2s;}
+.sort-bin.drag-over{background:#263b55;border-color:var(--lime);}
+.sort-bin h3{margin:0 0 10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;min-height:50px;}
+.chip{background:#344c6b;color:white;border:1px solid #67809f;padding:9px 12px;border-radius:12px;cursor:grab;user-select:none;}
+.chip:active{cursor:grabbing;}
+.chip.selected{outline:3px solid var(--cyan)}
+.plan{overflow-x:auto}
+.plan table{width:100%;border-collapse:collapse;min-width:620px}
+.plan th,.plan td{padding:9px;border-bottom:1px solid var(--line);text-align:left}
+.plan th{color:var(--cyan)}
+.plan input[type=text], .plan textarea{width:100%;background:#101c2d;border:1px solid #526783;border-radius:8px;color:white;padding:8px;font-family:inherit;}
+.scenario{border:1px solid var(--line);padding:16px;border-radius:14px;margin:12px 0;background:#17243a}
+.scenario button{margin:5px 5px 0 0}
+.scenario .response{display:none;color:#d9e9f8;margin-top:10px}
+.scenario .response.show{display:block}
+.teacher{display:none;background:#17283e;border:1px solid var(--orange);padding:18px;border-radius:16px;margin-top:20px}
+.teacher.show{display:block}
+.teacher h3{color:var(--orange)}
+.footer{color:var(--muted);text-align:center;padding:28px 10px;font-size:.85rem}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999;align-items:center;justify-content:center;padding:20px;}
+.modal.show{display:flex;}
+.modal-content{background:var(--panel);padding:24px;border-radius:20px;max-width:800px;width:100%;border:2px solid var(--lime);max-height:90vh;overflow-y:auto;}
+@media(max-width:760px){.missions{grid-template-columns:1fr 1fr}.answers{grid-template-columns:1fr}.sort-grid{grid-template-columns:1fr}}
+@media(max-width:480px){.wrap{padding:13px}.missions{grid-template-columns:1fr}.top{align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+ <div class="brand">
+   <div class="logo">
+     <img src="TheLaurel_DELTA_Cropped.png" alt="The Laurel Delta" style="height: 38px; display: block; object-fit: contain;">
+   </div>
+   <div>
+     <div class="eyebrow">Year 9 • Personal Development / RSHE</div>
+     <h1>HEALTH HEROES</h1>
+     <p>Sexual Ethics • Interactive lesson</p>
+   </div>
+ </div>
+ <div class="top-actions">
+   <button class="secondary" id="teacherToggle">👩‍🏫 Teacher mode</button>
+   <button class="ghost" id="resetBtn">↻ Reset progress</button>
+ </div>
+</header>
+
+<section class="hero">
+ <div>
+   <div class="eyebrow">Your mission starts here</div>
+   <h2>Understand healthy relationships.<br>Become a Health Hero.</h2>
+   <p>Complete five missions exploring identity, autonomy, privacy, respectful behaviour, and sexual ethics. Collect points as you learn.</p>
+   <div class="stats">
+     <div class="stat">⭐ Score: <span id="score">0</span></div>
+     <div class="stat">🏅 Missions: <span id="completed">0/5</span></div>
+     <div class="stat">📈 Progress: <span id="percent">0%</span></div>
+   </div>
+   <div class="progress"><div id="progressBar"></div></div>
+   
+   <div id="mainCertContainer" style="display:none; text-align:center; width:100%; margin-top:20px;">
+      <button class="answer correct" onclick="openCertModal()" style="font-size:1.2rem; padding:16px 24px; box-shadow: 0 4px 15px rgba(91,214,154,0.3); border:2px solid var(--good); width:100%;">🏆 All Missions Complete! Open Export</button>
+   </div>
+ </div>
+ <div style="text-align: center; width: 100%; margin-top: 10px;">
+   <!-- Assuming the Y9 image path is the same style, if you have a specific Y9 image, replace "LJ.jpg" with it -->
+   <img src="LJ.jpg" alt="Learning Journey Pathway" style="max-width: 100%; border-radius: 16px; border: 2px solid #49617e; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+ </div>
+</section>
+
+<div class="section-title"><div><h2>Choose your mission</h2><p>Missions unlock automatically as you progress.</p></div><span class="pill">5 missions • 60-minute lesson</span></div>
+<section class="missions" id="missionGrid">
+ <article class="mission"><div class="emoji">🧠</div><h3>1. Knowledge Recall</h3><p>Recap healthy relationships, identity, and physical wellbeing.</p><div class="meta"><span>5–8 mins</span><span id="status0">Not started</span></div><button id="btnM0" onclick="openMission(0)">Start mission →</button></article>
+ <article class="mission"><div class="emoji">⚖️</div><h3>2. Right or Wrong?</h3><p>Evaluate different relationship scenarios and ethical decisions.</p><div class="meta"><span>8–10 mins</span><span id="status1">Not started</span></div><button id="btnM1" onclick="openMission(1)" disabled>🔒 Locked</button></article>
+ <article class="mission"><div class="emoji">💬</div><h3>3. Relationship Scenarios</h3><p>Explore autonomy, consent, and digital respect in dating situations.</p><div class="meta"><span>10–12 mins</span><span id="status2">Not started</span></div><button id="btnM2" onclick="openMission(2)" disabled>🔒 Locked</button></article>
+ <article class="mission"><div class="emoji">🤝</div><h3>4. Support & Advice</h3><p>Identify trusted adults and reliable support services.</p><div class="meta"><span>5–8 mins</span><span id="status3">Not started</span></div><button id="btnM3" onclick="openMission(3)" disabled>🔒 Locked</button></article>
+ <article class="mission"><div class="emoji">✍️</div><h3>5. Demonstrate</h3><p>Write an advice letter to show what you have learned.</p><div class="meta"><span>15 mins</span><span id="status4">Not started</span></div><button id="btnM4" onclick="openMission(4)" disabled>🔒 Locked</button></article>
+</section>
+
+<section class="activity" id="activity">
+ <div class="activity-head"><div><span class="eyebrow" id="missionLabel">MISSION 1</span><h2 id="activityTitle"></h2><p class="activity-intro" id="activityIntro"></p></div><button class="ghost" onclick="closeMission()">✕ Close</button></div>
+ <div id="activityContent"></div>
+ <div class="teacher" id="teacherPanel"><h3>👩‍🏫 Teacher dashboard</h3><div id="teacherContent"></div></div>
+</section>
+
+<footer class="footer">Health Heroes • Year 9 Sexual Ethics • Progress is saved on this device only.</footer>
+</div>
+
+<!-- Modal for Class Notebook Export -->
+<div id="certModal" class="modal">
+    <div class="modal-content">
+        <h2 style="color:var(--lime); margin-top:0;">📓 Class Notebook Export</h2>
+        <p style="margin-bottom:14px;">Type your name below to generate your final summary, then click the button to copy it so you can paste it directly into your Class Notebook.</p>
+        <input type="text" id="pupilName" placeholder="Enter your name" style="margin-bottom:14px; padding:10px; width:100%; max-width:300px; border-radius:8px; border:1px solid #526783; background:#101c2d; color:white; font-size:1rem;">
+        <textarea id="notebookText" rows="20" style="width:100%; padding:14px; border-radius:8px; border:1px solid #526783; background:#101c2d; color:white; margin-bottom:14px; font-family:monospace; font-size:1rem; resize:vertical;" readonly></textarea>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <button onclick="copyNotebook()">📋 Copy to Clipboard</button>
+            <button class="secondary" onclick="closeCertModal()">✕ Close</button>
+            <span id="copyMsg" style="color:var(--lime); display:none; font-weight:bold;">✓ Copied! Paste into your class notebook now!</span>
+        </div>
+    </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let score=Number(localStorage.getItem('hh_y9_score')||0);
+let completed=JSON.parse(localStorage.getItem('hh_y9_done')||'[false,false,false,false,false]');
+let teacher=false, current=-1;
+
+// Global state for saving answers locally
+let state = JSON.parse(localStorage.getItem('hh_y9_state')) || { 
+    m0: [], // Knowledge recall quiz
+    m1: [], // Right or wrong scenarios
+    m2: [], // Text areas for scenarios
+    m3: [], // Support sorting/selection
+    m4: ''  // Letter text
+};
+
+function saveState() { 
+    localStorage.setItem('hh_y9_state', JSON.stringify(state)); 
+}
+
+const missionInfo=[
+ ['Knowledge Recall','Test your memory on the characteristics of healthy relationships, identity, and physical wellbeing.'],
+ ['Right or Wrong?','Decide whether these behaviours in a relationship are right, wrong, or depend on the situation.'],
+ ['Relationship Scenarios','Consider how to navigate consent, autonomy, and sharing images respectfully online.'],
+ ['Support & Advice','Learn about the trusted adults and organisations you can turn to for help.'],
+ ['Demonstrate','Write an advice letter to a younger student explaining what healthy relationships involve.']
+];
+
+const recallQs=[
+ ['Which of the following is a characteristic of a healthy relationship?',['Controlling behaviour','Trust and respect','Ignoring boundaries','Keeping secrets from friends'],1,'Trust, respect, listening, and patience are key characteristics of a healthy relationship.'],
+ ['Why does identity matter?',['It gives a clear sense of who you are and builds confidence','It allows you to copy other people exactly','It means you never change your mind','It makes you better than everyone else'],0,'Identity gives a sense of self, builds self-esteem, and helps you feel secure.'],
+ ['Which is good advice for physical wellbeing?',['Stay up late on your phone','Drink plenty of sugary drinks','Get regular exercise and 8-10 hours of sleep','Skip meals if you are busy'],2,'Regular exercise, a balanced diet, hydration, and good sleep are essential.'],
+ ['Why is it important for young people to learn about health?',['So they can become doctors immediately','To make choices that are good for them and stay well','Because it is the only way to pass exams','So they never get sick ever again'],1,'Learning about health helps young people make informed choices and feel better.']
+];
+
+const rightWrongQs=[
+ ['Lying to your partner about something important',['Wrong','Right','Depends'],0,'Honesty and trust are fundamental to a healthy relationship.'],
+ ['Sharing a private photo someone sent you',['Wrong','Right','Depends'],0,'This breaks trust, violates privacy, and is often illegal (e.g. if under 18 or done maliciously).'],
+ ['Checking your partner's phone without permission',['Wrong','Right','Depends'],0,'This shows a lack of trust and is an invasion of privacy.'],
+ ['Ending a relationship because your feelings have changed',['Wrong','Right','Depends'],1,'It is okay to end a relationship if you want to. You have autonomy over your choices.'],
+ ['Making jokes about someone's sexual reputation',['Wrong','Right','Depends'],0,'This is disrespectful, harmful, and can be a form of bullying or harassment.']
+];
+
+function save(){
+    localStorage.setItem('hh_y9_score',score);
+    localStorage.setItem('hh_y9_done',JSON.stringify(completed));
+    updateStats();
+}
+
+function updateStats(){
+  let n = completed.filter(Boolean).length; 
+  $('score').textContent = score;
+  $('completed').textContent = n + '/5';
+  $('percent').textContent = Math.round(n / 5 * 100) + '%';
+  $('progressBar').style.width = (n / 5 * 100) + '%';
+  
+  completed.forEach((v, i) => {
+    $('status' + i).textContent = v ? '✓ Completed' : 'Not started';
+    $('status' + i).className = v ? 'done' : '';
+    
+    let btn = $('btnM' + i);
+    if (i === 0 || completed[i-1] || v) {
+        btn.disabled = false;
+        btn.textContent = v ? 'Review mission →' : 'Start mission →';
+    } else {
+        btn.disabled = true;
+        btn.textContent = '🔒 Locked';
+    }
+  });
+
+  if(completed.every(Boolean)) {
+      $('mainCertContainer').style.display = 'block';
+  } else {
+      $('mainCertContainer').style.display = 'none';
+  }
+}
+
+function award(id,points=10){
+    let key='hh_y9_award_'+id;
+    if(!localStorage.getItem(key)){
+        score+=points;
+        localStorage.setItem(key,'1');
+        save();
+    }
+}
+
+function markDone(i){completed[i]=true;save();}
+
+function openMission(i){
+    current=i;
+    $('activity').classList.add('active');
+    $('missionLabel').textContent='MISSION '+(i+1);
+    $('activityTitle').textContent=missionInfo[i][0];
+    $('activityIntro').textContent=missionInfo[i][1];
+    $('teacherPanel').classList.toggle('show',teacher);
+    renderMission(i);
+    $('activity').scrollIntoView({behavior:'smooth',block:'start'})
+}
+
+function closeMission(){$('activity').classList.remove('active')}
+
+function renderMission(i){
+  let c=$('activityContent');
+  if(i===0)renderQuiz(recallQs, 'recall', 'm0', true);
+  if(i===1)renderQuiz(rightWrongQs, 'ethics', 'm1', false);
+  if(i===2)renderScenarios();
+  if(i===3)renderSupport();
+  if(i===4)renderDemonstrate();
+  renderTeacher();
+}
+
+// Generic quiz renderer with optional scoring for correct/incorrect
+function renderQuiz(qs, key, stateKey, checkCorrectness){
+  let c=$('activityContent');
+  c.innerHTML='';
+  let answered=0, correct=0;
+  
+  // Provide instructions for M1
+  if(key === 'ethics') {
+      c.innerHTML = '<div class="callout" style="background:#17243a; border-left-color:var(--cyan);"><strong>Instructions:</strong> Decide if the following actions in a relationship are right, wrong, or if it depends. Read the feedback to understand why.</div>';
+  }
+  
+  qs.forEach((q, qi) => {
+    let box = document.createElement('div');
+    box.className = 'question';
+    box.innerHTML = '<h3>Question '+(qi+1)+' of '+qs.length+'</h3><p>'+q[0]+'</p><div class="answers"></div><div class="feedback" id="'+key+'fb'+qi+'"></div>';
+    let ans = box.querySelector('.answers');
+    
+    let prevAns = state[stateKey][qi];
+
+    q[1].forEach((a, ai) => {
+      let b = document.createElement('button');
+      b.className = 'answer';
+      b.textContent = a;
+
+      if (prevAns === ai) {
+          box.dataset.answered = '1';
+          answered++;
+          let ok = (ai === q[2]);
+          if(checkCorrectness) {
+              if(ok) { correct++; b.classList.add('correct'); }
+              else { b.classList.add('wrong'); setTimeout(() => { ans.children[q[2]].classList.add('correct'); }, 0); }
+          } else {
+              b.classList.add('selected');
+              b.style.borderColor = 'var(--cyan)';
+              // If wrong was chosen in M1, maybe highlight the intended answer
+              if(ai !== q[2]) {
+                  setTimeout(() => { ans.children[q[2]].style.borderColor = 'var(--good)'; }, 0);
+              } else {
+                  b.classList.add('correct');
+              }
+          }
+          
+          let fb = $(key+'fb'+qi);
+          fb.textContent = (checkCorrectness ? (ok ? 'Correct! ' : 'Not quite. ') : '') + q[3];
+          fb.classList.add('show');
+      }
+
+      b.onclick = () => {
+        if(box.dataset.answered) return;
+        box.dataset.answered = '1';
+        answered++;
+        
+        state[stateKey][qi] = ai;
+        saveState();
+
+        let ok = (ai === q[2]);
+        
+        if(checkCorrectness) {
+            if(ok){
+              correct++;
+              b.classList.add('correct');
+              award(key+'_'+qi, 10);
+            } else {
+              b.classList.add('wrong');
+              ans.children[q[2]].classList.add('correct');
+            }
+        } else {
+            b.classList.add('selected');
+            b.style.borderColor = 'var(--cyan)';
+            if(ok) {
+                 b.classList.add('correct');
+                 award(key+'_'+qi, 10);
+            } else {
+                 ans.children[q[2]].style.borderColor = 'var(--good)';
+            }
+        }
+        
+        let fb = $(key+'fb'+qi);
+        fb.textContent = (checkCorrectness ? (ok ? 'Correct! ' : 'Not quite. ') : '') + q[3];
+        fb.classList.add('show');
+        
+        checkQuizCompletion();
+      };
+      ans.appendChild(b);
+    });
+    c.appendChild(box);
+  });
+
+  checkQuizCompletion();
+
+  function checkQuizCompletion() {
+      if(answered === qs.length && !c.querySelector('.callout.result')) {
+          let result = document.createElement('div');
+          result.className = 'callout result';
+          if(checkCorrectness) {
+              result.innerHTML = `<strong>Challenge complete: ${correct}/${qs.length} correct.</strong> ` + (correct === qs.length ? 'Perfect score!' : 'Review the explanations.');
+          } else {
+              result.innerHTML = `<strong>Challenge complete.</strong> Reflect on the situations where your answer differed from the guidance.`;
+          }
+          c.appendChild(result);
+          
+          if (!completed[current]) {
+              markDone(current);
+          }
+      }
+  }
+}
+
+function renderScenarios() {
+    let c=$('activityContent');
+    c.innerHTML = `
+    <div class="callout">
+        <strong>Keyword: Autonomy</strong> - People having control over decisions concerning their own bodies.
+    </div>
+    
+    <div class="question">
+        <h3>Scenario 1: Consent and Change of Mind</h3>
+        <p>Alex and Sam are dating. Alex wants to kiss Sam. Sam initially says yes, but then changes their mind. What should Alex do? How does this relate to autonomy?</p>
+        <textarea id="scen1" rows="4" placeholder="Type your thoughts here..."></textarea>
+    </div>
+
+    <div class="question">
+        <h3>Scenario 2: Digital Respect</h3>
+        <p>Someone posts a sexualised picture of themselves. Other students start sharing it and making comments. Who owns the image? Does forwarding it make you responsible? What would respectful behaviour look like?</p>
+        <textarea id="scen2" rows="5" placeholder="Type your thoughts here..."></textarea>
+    </div>
+    
+    <div class="actions">
+        <button id="saveScenariosBtn">Save Responses & Complete Mission (+20 points)</button>
+    </div>
+    <div id="scenariosFb" class="feedback"></div>
+    `;
+
+    if (state.m2[0]) $('scen1').value = state.m2[0];
+    if (state.m2[1]) $('scen2').value = state.m2[1];
+    
+    if (completed[2]) {
+        $('saveScenariosBtn').textContent = '✓ Mission completed (Saved)';
+    }
+
+    $('saveScenariosBtn').onclick = () => {
+        let v1 = $('scen1').value.trim();
+        let v2 = $('scen2').value.trim();
+        
+        if(v1 === '' || v2 === '') {
+            let fb = $('scenariosFb');
+            fb.textContent = 'Please write something for both scenarios.';
+            fb.classList.add('show');
+            return;
+        }
+
+        state.m2 = [v1, v2];
+        saveState();
+        
+        let fb = $('scenariosFb');
+        fb.textContent = 'Responses saved. Respecting consent (even when withdrawn) and not sharing private images are vital parts of sexual ethics.';
+        fb.classList.add('show');
+        
+        $('saveScenariosBtn').textContent = '✓ Mission completed (Saved)';
+        
+        award('scenarios_done', 20);
+        markDone(2);
+    };
+}
+
+function renderSupport() {
+    let c=$('activityContent');
+    c.innerHTML = `
+    <div class="callout" style="background:#17243a; border-left-color:var(--cyan);">
+        <strong>Instructions:</strong> Select the groups or services you think would be reliable sources of support or advice for young people feeling unsafe or needing relationship advice.
+    </div>
+    
+    <div class="question">
+        <h3>Who can you turn to? (Select all that apply)</h3>
+        <div id="supportChips" class="chips"></div>
+        <div class="actions"><button onclick="checkSupport()">Check My Choices</button></div>
+        <div id="supportFb" class="feedback"></div>
+    </div>
+    
+    <div class="question">
+        <h3>Helplines & Services</h3>
+        <p class="small">The lesson highlights these key services. You don't need to select anything here, just read and remember.</p>
+        <ul style="color:var(--muted); line-height:1.8;">
+            <li><strong>Childline:</strong> 0800 1111 (free, 24/7) or online chat.</li>
+            <li><strong>NSPCC Helpline:</strong> 0808 800 5000.</li>
+            <li><strong>The Mix (ages 11-25):</strong> 0808 808 4994.</li>
+            <li><strong>Other trusted adults:</strong> Parents/carers, teachers, doctors, aunties/uncles, coaches.</li>
+        </ul>
+    </div>
+    
+    <div class="actions">
+        <button id="completeM3Btn" disabled>Complete Activity</button>
+    </div>
+    `;
+
+    let options = ['Parents/Carers', 'Random people online', 'A Teacher', 'A Doctor', 'School bullies', 'Childline', 'The Mix', 'NSPCC'];
+    // indices of good choices: 0, 2, 3, 5, 6, 7
+    
+    options.forEach((opt, i) => {
+        let b = document.createElement('button');
+        b.className = 'chip';
+        b.textContent = opt;
+        b.dataset.i = i;
+        
+        if (state.m3.includes(i)) b.classList.add('selected');
+        
+        b.onclick = () => {
+            b.classList.toggle('selected');
+            state.m3 = [...document.querySelectorAll('#supportChips .selected')].map(el => +el.dataset.i);
+            saveState();
+        };
+        $('supportChips').appendChild(b);
+    });
+
+    if (completed[3]) {
+        $('completeM3Btn').disabled = false;
+        $('completeM3Btn').textContent = '✓ Mission completed';
+    }
+
+    window.checkSupport = function() {
+        let chosen = state.m3;
+        let right = [0, 2, 3, 5, 6, 7];
+        let bad = [1, 4];
+        
+        let hasBad = chosen.some(x => bad.includes(x));
+        let hasGood = chosen.some(x => right.includes(x));
+        
+        let fb = $('supportFb');
+        if (hasBad) {
+            fb.textContent = "Be careful! Random people online or bullies are NOT reliable sources of support.";
+            fb.classList.add('show');
+        } else if (hasGood && chosen.length >= 3) {
+            fb.textContent = "Great choices. Trusted adults and official helplines like Childline are there to help you safely.";
+            fb.classList.add('show');
+            $('completeM3Btn').disabled = false;
+        } else {
+            fb.textContent = "Select a few more safe options to show you know where to get help.";
+            fb.classList.add('show');
+        }
+    };
+
+    $('completeM3Btn').onclick = () => {
+        award('support_done', 15);
+        markDone(3);
+        $('completeM3Btn').textContent = '✓ Mission completed';
+    }
+}
+
+function renderDemonstrate() {
+    let c=$('activityContent');
+    c.innerHTML = `
+    <div class="callout" style="background:#263b55; border-left-color:var(--orange);">
+        <strong>TOP TIP:</strong> Try using BLT (because... leads to... therefore...) to ensure you have developed your answers fully.
+    </div>
+    
+    <div class="question">
+        <h3>Write a short advice letter to a younger student helping them understand healthy relationships.</h3>
+        <ul style="color:var(--muted); font-size:0.9rem;">
+            <li>Define healthy relationships.</li>
+            <li>Give examples of the principles of healthy relationships.</li>
+            <li>Explain how and where the student can find sources of support.</li>
+            <li>Describe and explain a scenario which shows a healthy/unhealthy relationship.</li>
+        </ul>
+        <textarea id="letterInput" rows="12" placeholder="Dear Year 8 student..."></textarea>
+    </div>
+    
+    <div class="actions">
+        <button id="saveLetterBtn">Save Letter & Complete (+30 points)</button>
+    </div>
+    <div id="letterFb" class="feedback"></div>
+    `;
+
+    if (state.m4) $('letterInput').value = state.m4;
+    
+    if (completed[4]) {
+        $('saveLetterBtn').textContent = '✓ Mission completed (Saved)';
+    }
+
+    $('letterInput').addEventListener('input', () => {
+        state.m4 = $('letterInput').value;
+        saveState();
+    });
+
+    $('saveLetterBtn').onclick = () => {
+        if($('letterInput').value.trim().length < 50) {
+            let fb = $('letterFb');
+            fb.textContent = 'Please write a bit more detail to fully cover the bullet points.';
+            fb.classList.add('show');
+            return;
+        }
+        
+        let fb = $('letterFb');
+        fb.textContent = 'Letter saved successfully! You have completed all missions.';
+        fb.classList.add('show');
+        
+        $('saveLetterBtn').textContent = '✓ Mission completed (Saved)';
+        
+        award('letter_done', 30);
+        markDone(4);
+    };
+}
+
+function renderTeacher(){
+  let t=$('teacherContent');
+  if(!t)return;
+  let notes=[
+    'Recap answers: Trust/respect; gives sense of who you are/builds confidence; regular exercise/sleep; make choices that are good for them.',
+    'Right/Wrong discussion points: Lying (wrong); Sharing private photo (wrong/illegal); Checking phone (wrong/invasion of privacy); Ending relationship (right/autonomy); Making jokes (wrong/disrespectful).',
+    'Scenario 1 (Kiss): Alex must stop. Consent can be withdrawn at any time. Scenario 2 (Digital): Sharing without consent is wrong; the person in the image owns it; forwarding makes you responsible/complicit.',
+    'Ensure students know the school safeguarding procedures and key external contacts: Childline, NSPCC, The Mix.',
+    'Look for use of the BLT structure in their letters and inclusion of the key criteria.'
+  ];
+  
+  t.innerHTML = `<p><strong>Lesson objective:</strong> To understand how we can make decisions about what is or is not ok, and why healthy relationships matter.</p>
+  <p><strong>Keyword:</strong> Autonomy - People having control over decisions concerning their own bodies.</p>
+  <p><strong>Mission Notes:</strong></p>
+  <ul><li>${notes[current]}</li></ul>
+  <div class="callout"><strong>Safeguarding reminder:</strong> Keep discussion general and inclusive. Do not invite pupils to disclose personal details. Follow your school's safeguarding policies.</div>`;
+}
+
+// Certificate / Notebook Export Logic
+function openCertModal() {
+    $('certModal').classList.add('show');
+    updateNotebookText();
+}
+function closeCertModal() {
+    $('certModal').classList.remove('show');
+}
+
+function updateNotebookText() {
+    let nameInput = $('pupilName');
+    let textArea = $('notebookText');
+    let n = completed.filter(Boolean).length;
+    let dateStr = new Date().toLocaleDateString('en-GB');
+    
+    let m1Score = 0;
+    recallQs.forEach((q, idx) => {
+        if (state.m0[idx] === q[2]) m1Score++;
+    });
+
+    let txt = "========================================
+" +
+              "🏆 HEALTH HEROES: SEXUAL ETHICS RESULTS 🏆
+" +
+              "========================================
+" +
+              "Date: " + dateStr + "
+" +
+              "Pupil: " + (nameInput.value || "[Type your name]") + "
+" +
+              "Overall Score: " + score + " points
+" +
+              "Missions Completed: " + n + "/5
+" +
+              "Recall Quiz Score: " + m1Score + "/" + recallQs.length + "
+" +
+              "========================================
+
+";
+
+    if (state.m2 && state.m2.length === 2) {
+        txt += "--- SCENARIO RESPONSES ---
+
+";
+        txt += "Consent & Autonomy:
+" + (state.m2[0] || "No response provided.") + "
+
+";
+        txt += "Digital Respect:
+" + (state.m2[1] || "No response provided.") + "
+
+";
+        txt += "========================================
+
+";
+    }
+    
+    txt += "--- DEMONSTRATE: ADVICE LETTER ---
+
+";
+    txt += state.m4 || "No letter provided.";
+              
+    textArea.value = txt;
+}
+
+$('pupilName').addEventListener('input', updateNotebookText);
+
+window.copyNotebook = function() {
+    let textArea = $('notebookText');
+    textArea.select();
+    textArea.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(textArea.value).then(()=>{
+        $("copyMsg").style.display = "inline";
+        setTimeout(() => $("copyMsg").style.display = "none", 3000);
+    });
+}
+
+$('teacherToggle').onclick=()=>{teacher=!teacher;$('teacherToggle').textContent=teacher?'👩‍🏫 Teacher mode: ON':'👩‍🏫 Teacher mode';$('teacherPanel').classList.toggle('show',teacher);if(current>=0)renderTeacher()};
+
+$('resetBtn').onclick=()=>{if(confirm('Reset all Health Heroes scores and mission progress on this device for Year 9?')){
+    score=0;
+    completed=[false,false,false,false,false];
+    state = { m0: [], m1: [], m2: [], m3: [], m4: '' };
+    Object.keys(localStorage).filter(k=>k.startsWith('hh_y9_')).forEach(k=>localStorage.removeItem(k));
+    save();
+    $('certModal').classList.remove('show');
+    if(current>=0) renderMission(current);
+}};
+
+updateStats();
+</script>
+</body></html>

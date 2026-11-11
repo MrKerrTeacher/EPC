@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kerr-i-cade - 8-Bit Space Invaders</title>
+    <!-- Google Font for Pixel-Art Vibe -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        arcadeGreen: '#00ff66',
+                        arcadePink: '#ff007f',
+                        arcadeCyan: '#00e5ff',
+                        arcadeYellow: '#ffee00',
+                        arcadeDark: '#050a07',
+                        arcadePanel: '#0f1f17'
+                    },
+                    fontFamily: {
+                        pixel: ['"Press Start 2P"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Arcade Scanline & CRT Effects */
+        body {
+            background-color: #030705;
+            color: #00ff66;
+            font-family: 'Press Start 2P', monospace;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        .crt-container {
+            position: relative;
+            overflow: hidden;
+            border: 4px solid #00ff66;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.4), inset 0 0 15px rgba(0, 255, 102, 0.2);
+            border-radius: 12px;
+        }
+
+        /* CRT Scanlines overlay */
+        .scanlines {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.35) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 4px, 6px 100%;
+            z-index: 20;
+        }
+
+        /* Screen Flicker */
+        @keyframes flicker {
+            0% { opacity: 0.98; }
+            50% { opacity: 1; }
+            100% { opacity: 0.97; }
+        }
+
+        .crt-screen {
+            animation: flicker 0.15s infinite;
+        }
+
+        /* Glowing Text Utilities */
+        .glow-green { text-shadow: 0 0 8px #00ff66, 0 0 16px #00ff66; }
+        .glow-pink { text-shadow: 0 0 8px #ff007f, 0 0 16px #ff007f; }
+        .glow-red { text-shadow: 0 0 8px #ff0033, 0 0 16px #ff0033; }
+        .glow-yellow { text-shadow: 0 0 8px #ffee00, 0 0 16px #ffee00; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050a07; }
+        ::-webkit-scrollbar-thumb { background: #00ff66; border-radius: 3px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-2 md:p-4 text-xs">
+
+    <!-- TEACHER DASHBOARD HEADER (Only visible when URL contains ?admin=true) -->
+    <div id="teacher-dashboard-panel" class="hidden w-full max-w-5xl bg-red-950/90 border-2 border-red-500 rounded-xl p-4 mb-3 shadow-lg shadow-red-500/20">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></span>
+                    <h2 class="text-sm md:text-base font-bold text-red-400 tracking-wider">TEACHER CONTROL PANEL (ADMIN MODE)</h2>
+                </div>
+                <p class="text-[9px] text-gray-300 mt-1">Changes sync instantly across all student screens via Cloud Database.</p>
+            </div>
+
+            <!-- Master Lock Remote Switch -->
+            <div class="flex items-center gap-3 bg-black/80 px-4 py-2 rounded.lg border border-red-500/50">
+                <span class="text-[10px] text-gray-300">REMOTE ARCADE STATE:</span>
+                <button id="master-lock-btn" class="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-2 rounded text-xs transition-all flex items-center gap-2 shadow-[0_0_10px_#ff0033]">
+                    <span id="master-lock-icon">🔒</span>
+                    <span id="master-lock-text">ARCADE: LOCKED</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Student URL Generator Helper for Health Heroes Integration -->
+        <div class="mt-3 pt-3 border-t border-red-500/30 flex flex-wrap items-center justify-between gap-3 text-[10px]">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-arcadeYellow">GENERATE REWARD LINK:</span>
+                <input id="reward-points-input" type="number" value="300" placeholder="Points" class="w-20 bg-black border border-gray-600 px-2 py-1 text-white rounded text-center">
+                <span class="text-gray-400">PTS = <span id="reward-calc-time" class="text-arcadeGreen font-bold">3 MINS</span></span>
+                <button id="copy-reward-link-btn" class="bg-arcadePanel border border-arcadeGreen text-arcadeGreen px-3 py-1 rounded hover:bg-arcadeGreen hover:text-black transition-colors">
+                    COPY STUDENT LINK
+                </button>
+            </div>
+            <a href="?" class="text-arcadeCyan underline hover:text-white">Switch to Student View</a>
+        </div>
+    </div>
+
+    <!-- MAIN ARCADE MACHINE -->
+    <main class="w-full max-w-5xl flex flex-col items-center">
+        
+        <!-- Scoreboard & Time Bank Bar -->
+        <div class="w-full bg-black/80 border-2 border-b-0 border-arcadeGreen/70 rounded-t-xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div class="flex items-center gap-4">
+                <div>SCORE: <span id="score-val" class="text-arcadeYellow glow-green">0000</span></div>
+                <div>HIGH: <span id="high-score-val" class="text-arcadeGreen">0000</span></div>
+                <div>WAVE: <span id="wave-val" class="text-arcadeCyan">1</span></div>
+            </div>
+
+            <!-- Student Banked Time Engine (Read from URL) -->
+            <div class="flex items-center gap-3 bg-arcadePanel px-3 py-1.5 rounded border border-arcadeGreen/40">
+                <div class="flex items-center gap-2">
+                    <span class="text-[10px] text-gray-400">BANKED TIME:</span>
+                    <span id="play-timer" class="text-arcadeYellow font-bold glow-pink">00:00</span>
+                </div>
+                <button id="pause-btn" class="bg-arcadeDark border border-arcadeGreen text-arcadeGreen px-2 py-0.5 rounded text-[9px] hover:bg-arcadeGreen hover:text-black transition-colors">
+                    PAUSE [P]
+                </button>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <span>LIVES:</span>
+                <div id="lives-container" class="flex items-center gap-1"></div>
+            </div>
+        </div>
+
+        <!-- CRT Frame and Canvas Screen -->
+        <div class="crt-container w-full bg-black relative flex justify-center items-center rounded-b-xl">
+            <div class="scanlines"></div>
+            
+            <!-- Canvas Game Screen -->
+            <canvas id="gameCanvas" width="800" height="550" class="crt-screen w-full h-auto block bg-black aspect-[8/5.5]"></canvas>
+
+            <!-- FULLSCREEN OVERLAY: Teacher Remote Lock Screen -->
+            <div id="teacher-lock-overlay" class="hidden absolute inset-0 bg-black/95 z-40 flex flex-col items-center justify-center p-6 text-center border-4 border-red-600 animate-pulse">
+                <div class="w-20 h-20 mb-4 text-red-500 animate-bounce">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h2 class="text-xl md:text-3xl text-red-500 font-bold tracking-widest mb-3 glow-red">
+                    LOCKED BY TEACHER
+                </h2>
+                <h3 class="text-base md:text-2xl text-arcadeYellow font-bold mb-6 glow-yellow">
+                    GET BACK TO WORK!
+                </h3>
+                <div class="max-w-md bg-red-950/40 border border-red-600/50 p-4 rounded-lg text-[10px] text-gray-300 leading-relaxed text-center space-y-2">
+                    <p class="text-red-300 font-bold">🔒 LESSON IN PROGRESS</p>
+                    <p>The arcade has been locked remotely for your class. Complete your online test questions to earn time!</p>
+                </div>
+            </div>
+
+            <!-- OVERLAY: Time Expired / No Time Banked -->
+            <div id="time-up-overlay" class="hidden absolute inset-0 bg-black/90 z-30 flex flex-col items-center justify-center p-6 text-center">
+                <h2 class="text-xl md:text-2xl text-arcadeYellow font-bold mb-4 glow-green">NO PLAY TIME AVAILABLE</h2>
+                <p class="text-xs text-gray-300 mb-6 max-w-md leading-relaxed">
+                    You have 0 minutes remaining! Complete test questions on your lesson page to earn points and unlock arcade playtime.
+                </p>
+                <div class="text-[10px] text-arcadeGreen bg-arcadePanel px-4 py-2 rounded border border-arcadeGreen/40">
+                    REWARD RULE: 300 POINTS = 3 MINUTES PLAYTIME
+                </div>
+            </div>
+
+            <!-- OVERLAY: Game Over -->
+            <div id="game-over-overlay" class="hidden absolute inset-0 bg-black/90 z-30 flex flex-col items-center justify-center p-6 text-center">
+                <h2 class="text-3xl text-arcadePink font-bold mb-2 glow-pink">GAME OVER</h2>
+                <p class="text-sm text-arcadeYellow mb-6">FINAL SCORE: <span id="final-score-val">0</span></p>
+                <button id="restart-game-btn" class="bg-arcadeGreen text-black font-bold px-4 py-3 rounded text-xs hover:scale-105 transition-transform glow-green">
+                    PRESS START TO PLAY AGAIN
+                </button>
+            </div>
+        </div>
+
+        <!-- Touch Controls for Mobile/Tablet -->
+        <div class="w-full mt-3 flex items-center justify-between gap-4 md:hidden">
+            <div class="flex gap-2">
+                <button id="btn-left" class="bg-arcadePanel border-2 border-arcadeGreen text-arcadeGreen w-14 h-14 rounded-lg text-lg flex items-center justify-center active:bg-arcadeGreen active:text-black">◀</button>
+                <button id="btn-right" class="bg-arcadePanel border-2 border-arcadeGreen text-arcadeGreen w-14 h-14 rounded-lg text-lg flex items-center justify-center active:bg-arcadeGreen active:text-black">▶</button>
+            </div>
+            <button id="btn-fire" class="bg-arcadePink/80 border-2 border-arcadePink text-white px-8 h-14 rounded-lg font-bold text-sm flex items-center justify-center active:scale-95 shadow-[0_0_10px_#ff007f]">FIRE 🔥</button>
+        </div>
+
+        <!-- Footer -->
+        <footer class="w-full mt-3 flex flex-wrap items-center justify-between text-[10px] text-gray-400 px-2 gap-2">
+            <div>CONTROLS: <span class="text-arcadeGreen">[◄ / ►]</span> MOVE | <span class="text-arcadeGreen">[SPACE]</span> FIRE | <span class="text-arcadeGreen">[P]</span> PAUSE</div>
+            <div class="flex items-center gap-3">
+                <button id="sound-toggle-btn" class="hover:text-arcadeGreen underline">SOUND: ON 🔊</button>
+                <span>KERR-I-CADE 8-BIT CLASSICS</span>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Toast Notification Box -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-arcadeGreen text-black font-bold px-4 py-2 rounded shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none text-xs z-50">
+        Copied to clipboard!
+    </div>
+
+    <!-- FIREBASE MODULE & ARCADE LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase state & appId reference
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'kerr-i-cade-app';
+        let db = null;
+        let auth = null;
+        let isFirebaseConnected = false;
+
+        // Firebase Initialization
+        try {
+            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+            if (firebaseConfig) {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                // Authenticate before Firestore subscriptions
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                isFirebaseConnected = true;
+            }
+        } catch (e) {
+            console.warn("Firebase running in offline fallback mode:", e);
+        }
+
+        // --- Sound Engine (Web Audio API Synthesizer) ---
+        class SoundEngine {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+            }
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtx) this.ctx = new AudioCtx();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+            playShoot() {
+                if (this.muted || !this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(880, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(110, this.ctx.currentTime + 0.12);
+                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.12);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.12);
+                } catch(e){}
+            }
+            playExplosion() {
+                if (this.muted || !this.ctx) return;
+                try {
+                    const bufferSize = this.ctx.sampleRate * 0.2;
+                    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                    const output = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+
+                    const whiteNoise = this.ctx.createBufferSource();
+                    whiteNoise.buffer = buffer;
+                    const filter = this.ctx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(800, this.ctx.currentTime);
+                    filter.frequency.linearRampToValueAtTime(50, this.ctx.currentTime + 0.2);
+
+                    const gain = this.ctx.createGain();
+                    gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
+
+                    whiteNoise.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    whiteNoise.start();
+                    whiteNoise.stop(this.ctx.currentTime + 0.2);
+                } catch(e){}
+            }
+            playInvaderMarch(noteIndex) {
+                if (this.muted || !this.ctx) return;
+                try {
+                    const freqs = [160, 140, 130, 110];
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(freqs[noteIndex % 4], this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.08);
+                } catch(e){}
+            }
+            playBonus() {
+                if (this.muted || !this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(587.33, this.ctx.currentTime);
+                    osc.frequency.setValueAtTime(880, this.ctx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.25);
+                } catch(e){}
+            }
+        }
+
+        const sound = new SoundEngine();
+
+        // --- Main Game & Remote Sync Engine ---
+        class KerrICade {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.width = 800;
+                this.height = 550;
+
+                // State Management
+                this.gameState = 'START'; // 'START', 'PLAYING', 'PAUSED', 'TIME_EXPIRED', 'GAME_OVER', 'LOCKED'
+                this.previousStateBeforeLock = 'START';
+                this.arcadeUnlockedByTeacher = true;
+
+                // URL Query Parameter Evaluation (Strict separation of Student/Teacher)
+                const urlParams = new URLSearchParams(window.location.search);
+                this.isAdmin = urlParams.get('admin') === 'true';
+
+                // Evaluate Banked Time (e.g. ?time=180 or ?points=300)
+                let initialSeconds = 0;
+                if (urlParams.has('time')) {
+                    initialSeconds = parseInt(urlParams.get('time'), 10) || 0;
+                } else if (urlParams.has('points')) {
+                    const pts = parseInt(urlParams.get('points'), 10) || 0;
+                    initialSeconds = Math.floor(pts * 0.6); // 300 points = 180s (3 mins)
+                } else {
+                    initialSeconds = 180; // Default 3 mins demo time if no parameter supplied
+                }
+
+                this.remainingSeconds = initialSeconds;
+                this.timerInterval = null;
+
+                // Gameplay Variables
+                this.score = 0;
+                this.highScore = localStorage.getItem('kerr_high_score') || 0;
+                this.lives = 3;
+                this.wave = 1;
+                this.keys = { left: false, right: false, fire: false };
+
+                // Entities
+                this.player = null;
+                this.playerLasers = [];
+                this.invaders = [];
+                this.invaderBullets = [];
+                this.bunkers = [];
+                this.ufo = null;
+                this.ufoTimer = 0;
+
+                // Invader Step Timer
+                this.invaderDirection = 1;
+                this.invaderStepTimer = 0;
+                this.invaderStepInterval = 45;
+                this.invaderAnimFrame = 0;
+                this.marchSoundStep = 0;
+
+                // UI References
+                this.scoreEl = document.getElementById('score-val');
+                this.highScoreEl = document.getElementById('high-score-val');
+                this.waveEl = document.getElementById('wave-val');
+                this.timerEl = document.getElementById('play-timer');
+                this.livesContainer = document.getElementById('lives-container');
+                this.teacherLockOverlay = document.getElementById('teacher-lock-overlay');
+                this.timeUpOverlay = document.getElementById('time-up-overlay');
+                this.gameOverOverlay = document.getElementById('game-over-overlay');
+                this.pauseBtn = document.getElementById('pause-btn');
+
+                this.init();
+            }
+
+            init() {
+                this.highScoreEl.textContent = String(this.highScore).padStart(4, '0');
+                this.updateTimerDisplay();
+
+                if (this.isAdmin) {
+                    this.setupTeacherDashboard();
+                }
+
+                this.setupFirebaseSync();
+                this.setupEventListeners();
+                this.resetPlayer();
+                this.createBunkers();
+                this.createInvaders();
+                this.updateLivesUI();
+
+                // If no initial play time, show overlay
+                if (this.remainingSeconds <= 0) {
+                    this.gameState = 'TIME_EXPIRED';
+                    this.timeUpOverlay.classList.remove('hidden');
+                }
+
+                requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
+            }
+
+            // Real-Time Syncing with Firebase
+            setupFirebaseSync() {
+                if (!isFirebaseConnected || !db) return;
+
+                // Document path adhering strictly to Rule 1: /artifacts/{appId}/public/data/config/global_state
+                const configDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'config', 'global_state');
+
+                // Listen to teacher lock state in real-time for ALL connected student tabs
+                onSnapshot(configDocRef, (snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.data();
+                        this.arcadeUnlockedByTeacher = data.arcade_unlocked !== false;
+                    } else {
+                        // Default state if doc doesn't exist yet
+                        this.arcadeUnlockedByTeacher = true;
+                    }
+                    this.applyTeacherLockState();
+                }, (error) => {
+                    console.warn("Firebase real-time snapshot error:", error);
+                });
+            }
+
+            // Teacher Master Switch & Link Generator
+            setupTeacherDashboard() {
+                const dashboard = document.getElementById('teacher-dashboard-panel');
+                dashboard.classList.remove('hidden');
+
+                const masterBtn = document.getElementById('master-lock-btn');
+                const lockText = document.getElementById('master-lock-text');
+                const lockIcon = document.getElementById('master-lock-icon');
+
+                const updateTeacherUI = (unlocked) => {
+                    if (unlocked) {
+                        masterBtn.className = 'bg-arcadeGreen hover:bg-emerald-400 text-black font-bold px-4 py-2 rounded text-xs transition-all flex items-center gap-2 shadow-[0_0_10px_#00ff66]';
+                        lockIcon.textContent = '🔓';
+                        lockText.textContent = 'ARCADE: UNLOCKED';
+                    } else {
+                        masterBtn.className = 'bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-2 rounded text-xs transition-all flex items-center gap-2 shadow-[0_0_10px_#ff0033]';
+                        lockIcon.textContent = '🔒';
+                        lockText.textContent = 'ARCADE: LOCKED';
+                    }
+                };
+
+                masterBtn.addEventListener('click', async () => {
+                    const newState = !this.arcadeUnlockedByTeacher;
+                    this.arcadeUnlockedByTeacher = newState;
+                    updateTeacherUI(newState);
+                    this.applyTeacherLockState();
+
+                    // Update Firebase Firestore
+                    if (isFirebaseConnected && db) {
+                        try {
+                            const configDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'config', 'global_state');
+                            await setDoc(configDocRef, { 
+                                arcade_unlocked: newState,
+                                updated_at: Date.now()
+                            }, { merge: true });
+                        } catch(e) {
+                            console.error("Failed to update teacher lock state in Firebase:", e);
+                        }
+                    }
+                });
+
+                // Student Link Generator for Teachers
+                const pointsInput = document.getElementById('reward-points-input');
+                const timeCalc = document.getElementById('reward-calc-time');
+                const copyBtn = document.getElementById('copy-reward-link-btn');
+
+                pointsInput.addEventListener('input', () => {
+                    const pts = parseInt(pointsInput.value, 10) || 0;
+                    const mins = (pts / 100).toFixed(1);
+                    timeCalc.textContent = `${mins} MINS`;
+                });
+
+                copyBtn.addEventListener('click', () => {
+                    const pts = parseInt(pointsInput.value, 10) || 300;
+                    const seconds = Math.floor(pts * 0.6);
+                    const baseUrl = window.location.origin + window.location.pathname;
+                    const studentUrl = `${baseUrl}?time=${seconds}`;
+
+                    // Standard iFrame safe clipboard copy
+                    const tempInput = document.createElement('input');
+                    tempInput.value = studentUrl;
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempInput);
+
+                    this.showToast(`Copied Student Link (${pts} Pts = ${seconds}s)!`);
+                });
+            }
+
+            applyTeacherLockState() {
+                if (!this.arcadeUnlockedByTeacher) {
+                    if (this.gameState !== 'LOCKED') {
+                        this.previousStateBeforeLock = this.gameState;
+                    }
+                    this.gameState = 'LOCKED';
+                    this.stopPlayTimer();
+                    this.teacherLockOverlay.classList.remove('hidden');
+                } else {
+                    if (this.gameState === 'LOCKED') {
+                        this.teacherLockOverlay.classList.add('hidden');
+                        this.gameState = (this.previousStateBeforeLock === 'LOCKED' || this.previousStateBeforeLock === 'TIME_EXPIRED') 
+                            ? 'START' 
+                            : this.previousStateBeforeLock;
+                        
+                        if (this.gameState === 'PLAYING') {
+                            this.startPlayTimer();
+                        }
+                    }
+                }
+            }
+
+            setupEventListeners() {
+                // Keyboard Input
+                window.addEventListener('keydown', (e) => {
+                    sound.init();
+                    if (!this.arcadeUnlockedByTeacher) return;
+
+                    if (e.code === 'ArrowLeft' || e.code === 'KeyA') this.keys.left = true;
+                    if (e.code === 'ArrowRight' || e.code === 'KeyD') this.keys.right = true;
+                    if (e.code === 'Space' || e.code === 'ArrowUp') {
+                        if (!this.keys.fire) this.handleFireAction();
+                        this.keys.fire = true;
+                        e.preventDefault();
+                    }
+                    if (e.code === 'KeyP') this.togglePause();
+                });
+
+                window.addEventListener('keyup', (e) => {
+                    if (e.code === 'ArrowLeft' || e.code === 'KeyA') this.keys.left = false;
+                    if (e.code === 'ArrowRight' || e.code === 'KeyD') this.keys.right = false;
+                    if (e.code === 'Space' || e.code === 'ArrowUp') this.keys.fire = false;
+                });
+
+                // Touch Controls
+                const bindTouch = (elem, keyName) => {
+                    elem.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        sound.init();
+                        if (keyName === 'fire') this.handleFireAction();
+                        this.keys[keyName] = true;
+                    });
+                    elem.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        this.keys[keyName] = false;
+                    });
+                };
+
+                bindTouch(document.getElementById('btn-left'), 'left');
+                bindTouch(document.getElementById('btn-right'), 'right');
+                bindTouch(document.getElementById('btn-fire'), 'fire');
+
+                // Student Pause Button
+                this.pauseBtn.addEventListener('click', () => this.togglePause());
+
+                // Restart Game Button
+                document.getElementById('restart-game-btn').addEventListener('click', () => this.restartGame());
+
+                // Sound Toggle
+                const soundBtn = document.getElementById('sound-toggle-btn');
+                soundBtn.addEventListener('click', () => {
+                    sound.muted = !sound.muted;
+                    soundBtn.textContent = sound.muted ? 'SOUND: OFF 🔇' : 'SOUND: ON 🔊';
+                });
+
+                // Canvas Click Start
+                this.canvas.addEventListener('click', () => {
+                    sound.init();
+                    if (this.gameState === 'START' && this.arcadeUnlockedByTeacher && this.remainingSeconds > 0) {
+                        this.startGame();
+                    }
+                });
+            }
+
+            showToast(msg) {
+                const toast = document.getElementById('toast');
+                toast.textContent = msg;
+                toast.classList.remove('opacity-0');
+                setTimeout(() => toast.classList.add('opacity-0'), 2500);
+            }
+
+            // --- Time Countdown Engine ---
+            startPlayTimer() {
+                this.stopPlayTimer();
+                this.timerInterval = setInterval(() => {
+                    if (this.gameState === 'PLAYING' && this.arcadeUnlockedByTeacher) {
+                        this.remainingSeconds--;
+                        this.updateTimerDisplay();
+
+                        if (this.remainingSeconds <= 0) {
+                            this.remainingSeconds = 0;
+                            this.gameState = 'TIME_EXPIRED';
+                            this.stopPlayTimer();
+                            this.timeUpOverlay.classList.remove('hidden');
+                        }
+                    }
+                }, 1000);
+            }
+
+            stopPlayTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            }
+
+            updateTimerDisplay() {
+                const mins = Math.floor(this.remainingSeconds / 60);
+                const secs = this.remainingSeconds % 60;
+                this.timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            }
+
+            // --- Game Logic & Physics ---
+            resetPlayer() {
+                this.player = {
+                    x: this.width / 2 - 16,
+                    y: this.height - 45,
+                    width: 32,
+                    height: 18,
+                    speed: 4.5
+                };
+            }
+
+            createBunkers() {
+                this.bunkers = [];
+                const count = 4;
+                const spacing = (this.width - (count * 64)) / (count + 1);
+
+                for (let i = 0; i < count; i++) {
+                    const bx = spacing + i * (64 + spacing);
+                    const by = this.height - 110;
+                    const blocks = [];
+                    const rows = 4;
+                    const cols = 8;
+                    const blockSize = 8;
+
+                    for (let r = 0; r < rows; r++) {
+                        for (let c = 0; c < cols; c++) {
+                            if (r >= 2 && (c >= 2 && c <= 5)) continue;
+                            if (r === 0 && (c === 0 || c === 7)) continue;
+                            blocks.push({
+                                x: bx + c * blockSize,
+                                y: by + r * blockSize,
+                                width: blockSize,
+                                height: blockSize,
+                                hp: 3
+                            });
+                        }
+                    }
+                    this.bunkers.push(blocks);
+                }
+            }
+
+            createInvaders() {
+                this.invaders = [];
+                const rows = 5;
+                const cols = 10;
+                const spacingX = 42;
+                const spacingY = 32;
+                const startX = (this.width - (cols * spacingX)) / 2;
+                const startY = 65;
+
+                for (let r = 0; r < rows; r++) {
+                    for (let c = 0; c < cols; c++) {
+                        let type = 0;
+                        let pts = 10;
+                        if (r === 0) { type = 2; pts = 30; }
+                        else if (r === 1 || r === 2) { type = 1; pts = 20; }
+
+                        this.invaders.push({
+                            x: startX + c * spacingX,
+                            y: startY + r * spacingY,
+                            width: 26,
+                            height: 20,
+                            type: type,
+                            points: pts,
+                            alive: true
+                        });
+                    }
+                }
+                this.invaderDirection = 1;
+                this.invaderStepInterval = Math.max(8, 45 - (this.wave * 4));
+            }
+
+            startGame() {
+                if (this.remainingSeconds <= 0) return;
+                this.score = 0;
+                this.lives = 3;
+                this.wave = 1;
+                this.scoreEl.textContent = '0000';
+                this.waveEl.textContent = '1';
+                this.gameOverOverlay.classList.add('hidden');
+                this.timeUpOverlay.classList.add('hidden');
+                this.updateLivesUI();
+                this.createInvaders();
+                this.createBunkers();
+                this.gameState = 'PLAYING';
+                this.startPlayTimer();
+            }
+
+            restartGame() {
+                if (this.remainingSeconds > 0) {
+                    this.startGame();
+                } else {
+                    this.gameOverOverlay.classList.add('hidden');
+                    this.timeUpOverlay.classList.remove('hidden');
+                }
+            }
+
+            togglePause() {
+                if (this.gameState === 'PLAYING') {
+                    this.gameState = 'PAUSED';
+                    this.stopPlayTimer();
+                    this.pauseBtn.textContent = 'RESUME [P]';
+                } else if (this.gameState === 'PAUSED') {
+                    this.gameState = 'PLAYING';
+                    this.startPlayTimer();
+                    this.pauseBtn.textContent = 'PAUSE [P]';
+                }
+            }
+
+            handleFireAction() {
+                if (this.gameState === 'START' && this.remainingSeconds > 0) {
+                    this.startGame();
+                    return;
+                }
+                if (this.gameState === 'PLAYING' && this.playerLasers.length < 2) {
+                    this.playerLasers.push({
+                        x: this.player.x + this.player.width / 2 - 2,
+                        y: this.player.y,
+                        width: 4,
+                        height: 12,
+                        speed: 8
+                    });
+                    sound.playShoot();
+                }
+            }
+
+            updateLivesUI() {
+                this.livesContainer.innerHTML = '';
+                for (let i = 0; i < this.lives; i++) {
+                    const icon = document.createElement('div');
+                    icon.className = 'w-4 h-3 bg-arcadeGreen rounded-t-sm relative';
+                    icon.style.clipPath = 'polygon(40% 0%, 60% 0%, 60% 30%, 100% 30%, 100% 100%, 0% 100%, 0% 30%, 40% 30%)';
+                    this.livesContainer.appendChild(icon);
+                }
+            }
+
+            gameLoop() {
+                this.ctx.fillStyle = '#030705';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+
+                if (this.gameState !== 'LOCKED') {
+                    if (this.gameState === 'PLAYING') {
+                        this.updateGameLogic();
+                    }
+                    this.renderGame();
+                } else {
+                    this.renderGame();
+                    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+                    this.ctx.fillRect(0, 0, this.width, this.height);
+                }
+
+                requestAnimationFrame(() => this.gameLoop());
+            }
+
+            updateGameLogic() {
+                // Controls
+                if (this.keys.left && this.player.x > 15) this.player.x -= this.player.speed;
+                if (this.keys.right && this.player.x < this.width - this.player.width - 15) this.player.x += this.player.speed;
+
+                // Lasers
+                for (let i = this.playerLasers.length - 1; i >= 0; i--) {
+                    const laser = this.playerLasers[i];
+                    laser.y -= laser.speed;
+
+                    if (laser.y < 35) {
+                        this.playerLasers.splice(i, 1);
+                        continue;
+                    }
+
+                    let laserHit = false;
+                    for (let j = 0; j < this.invaders.length; j++) {
+                        const inv = this.invaders[j];
+                        if (inv.alive && this.checkCollision(laser, inv)) {
+                            inv.alive = false;
+                            laserHit = true;
+                            this.score += inv.points;
+                            this.scoreEl.textContent = String(this.score).padStart(4, '0');
+
+                            if (this.score > this.highScore) {
+                                this.highScore = this.score;
+                                this.highScoreEl.textContent = String(this.highScore).padStart(4, '0');
+                                localStorage.setItem('kerr_high_score', this.highScore);
+                            }
+
+                            sound.playExplosion();
+                            const remaining = this.invaders.filter(inv => inv.alive).length;
+                            if (remaining === 0) {
+                                this.nextWave();
+                                return;
+                            } else {
+                                this.invaderStepInterval = Math.max(3, Math.floor(remaining * 0.8));
+                            }
+                            break;
+                        }
+                    }
+
+                    if (laserHit) {
+                        this.playerLasers.splice(i, 1);
+                        continue;
+                    }
+
+                    if (this.ufo && this.checkCollision(laser, this.ufo)) {
+                        this.score += this.ufo.points;
+                        this.scoreEl.textContent = String(this.score).padStart(4, '0');
+                        this.ufo = null;
+                        this.playerLasers.splice(i, 1);
+                        sound.playBonus();
+                        continue;
+                    }
+
+                    for (const bunker of this.bunkers) {
+                        for (let b = bunker.length - 1; b >= 0; b--) {
+                            const block = bunker[b];
+                            if (this.checkCollision(laser, block)) {
+                                block.hp--;
+                                if (block.hp <= 0) bunker.splice(b, 1);
+                                laserHit = true;
+                                break;
+                            }
+                        }
+                        if (laserHit) break;
+                    }
+
+                    if (laserHit) this.playerLasers.splice(i, 1);
+                }
+
+                // Invaders Step Movement
+                this.invaderStepTimer++;
+                if (this.invaderStepTimer >= this.invaderStepInterval) {
+                    this.invaderStepTimer = 0;
+                    this.invaderAnimFrame = (this.invaderAnimFrame === 0) ? 1 : 0;
+                    this.marchSoundStep = (this.marchSoundStep + 1) % 4;
+                    sound.playInvaderMarch(this.marchSoundStep);
+
+                    let hitEdge = false;
+                    const aliveInvaders = this.invaders.filter(i => i.alive);
+
+                    for (const inv of aliveInvaders) {
+                        if ((this.invaderDirection === 1 && inv.x + inv.width >= this.width - 20) ||
+                            (this.invaderDirection === -1 && inv.x <= 20)) {
+                            hitEdge = true;
+                            break;
+                        }
+                    }
+
+                    if (hitEdge) {
+                        this.invaderDirection *= -1;
+                        for (const inv of aliveInvaders) {
+                            inv.y += 14;
+                            if (inv.y + inv.height >= this.player.y) {
+                                this.triggerGameOver();
+                                return;
+                            }
+                        }
+                    } else {
+                        for (const inv of aliveInvaders) inv.x += this.invaderDirection * 8;
+                    }
+
+                    if (aliveInvaders.length > 0 && Math.random() < 0.45) {
+                        const shooter = aliveInvaders[Math.floor(Math.random() * aliveInvaders.length)];
+                        this.invaderBullets.push({
+                            x: shooter.x + shooter.width / 2,
+                            y: shooter.y + shooter.height,
+                            width: 3,
+                            height: 10,
+                            speed: 4.5
+                        });
+                    }
+                }
+
+                // Invader Bullets
+                for (let i = this.invaderBullets.length - 1; i >= 0; i--) {
+                    const bullet = this.invaderBullets[i];
+                    bullet.y += bullet.speed;
+
+                    if (bullet.y > this.height - 20) {
+                        this.invaderBullets.splice(i, 1);
+                        continue;
+                    }
+
+                    if (this.checkCollision(bullet, this.player)) {
+                        this.invaderBullets.splice(i, 1);
+                        this.handlePlayerHit();
+                        continue;
+                    }
+
+                    let bulletHit = false;
+                    for (const bunker of this.bunkers) {
+                        for (let b = bunker.length - 1; b >= 0; b--) {
+                            const block = bunker[b];
+                            if (this.checkCollision(bullet, block)) {
+                                block.hp--;
+                                if (block.hp <= 0) bunker.splice(b, 1);
+                                bulletHit = true;
+                                break;
+                            }
+                        }
+                        if (bulletHit) break;
+                    }
+
+                    if (bulletHit) this.invaderBullets.splice(i, 1);
+                }
+
+                // UFO Logic
+                this.ufoTimer++;
+                if (!this.ufo && this.ufoTimer > 600 && Math.random() < 0.005) {
+                    this.ufoTimer = 0;
+                    this.ufo = {
+                        x: -40,
+                        y: 42,
+                        width: 36,
+                        height: 16,
+                        speed: 2.2,
+                        points: [50, 100, 150, 300][Math.floor(Math.random() * 4)]
+                    };
+                }
+
+                if (this.ufo) {
+                    this.ufo.x += this.ufo.speed;
+                    if (this.ufo.x > this.width + 40) this.ufo = null;
+                }
+            }
+
+            handlePlayerHit() {
+                sound.playExplosion();
+                this.lives--;
+                this.updateLivesUI();
+
+                if (this.lives <= 0) {
+                    this.triggerGameOver();
+                } else {
+                    this.resetPlayer();
+                }
+            }
+
+            nextWave() {
+                this.wave++;
+                this.waveEl.textContent = this.wave;
+                sound.playBonus();
+                this.createInvaders();
+                this.playerLasers = [];
+                this.invaderBullets = [];
+            }
+
+            triggerGameOver() {
+                this.gameState = 'GAME_OVER';
+                this.stopPlayTimer();
+                document.getElementById('final-score-val').textContent = this.score;
+                this.gameOverOverlay.classList.remove('hidden');
+            }
+
+            checkCollision(rect1, rect2) {
+                return rect1.x < rect2.x + rect2.width &&
+                       rect1.x + rect1.width > rect2.x &&
+                       rect1.y < rect2.y + rect2.height &&
+                       rect1.y + rect1.height > rect2.y;
+            }
+
+            renderGame() {
+                // Outer CRT boundaries
+                this.ctx.strokeStyle = '#00ff66';
+                this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                this.ctx.moveTo(10, 35);
+                this.ctx.lineTo(this.width - 10, 35);
+                this.ctx.moveTo(10, this.height - 25);
+                this.ctx.lineTo(this.width - 10, this.height - 25);
+                this.ctx.stroke();
+
+                if (this.gameState === 'START') {
+                    this.renderStartScreen();
+                    return;
+                }
+
+                // Render Player
+                if (this.player && this.gameState !== 'GAME_OVER') {
+                    this.ctx.fillStyle = '#00ff66';
+                    const px = this.player.x;
+                    const py = this.player.y;
+                    this.ctx.fillRect(px + 12, py, 8, 4);
+                    this.ctx.fillRect(px + 10, py + 4, 12, 4);
+                    this.ctx.fillRect(px + 2, py + 8, 28, 6);
+                    this.ctx.fillRect(px, py + 14, 32, 4);
+                }
+
+                // Render Invaders
+                for (const inv of this.invaders) {
+                    if (inv.alive) this.render8BitInvader(inv);
+                }
+
+                // Render UFO
+                if (this.ufo) {
+                    this.ctx.fillStyle = '#ff007f';
+                    const ux = this.ufo.x;
+                    const uy = this.ufo.y;
+                    this.ctx.fillRect(ux + 10, uy, 16, 4);
+                    this.ctx.fillRect(ux + 4, uy + 4, 28, 6);
+                    this.ctx.fillRect(ux, uy + 10, 36, 4);
+                    this.ctx.fillRect(ux + 8, uy + 14, 6, 2);
+                    this.ctx.fillRect(ux + 22, uy + 14, 6, 2);
+                }
+
+                // Render Bunkers
+                for (const bunker of this.bunkers) {
+                    for (const block of bunker) {
+                        this.ctx.fillStyle = block.hp === 3 ? '#00ff66' : (block.hp === 2 ? '#00bb44' : '#006622');
+                        this.ctx.fillRect(block.x, block.y, block.width, block.height);
+                    }
+                }
+
+                // Player Lasers
+                this.ctx.fillStyle = '#ffee00';
+                for (const laser of this.playerLasers) {
+                    this.ctx.fillRect(laser.x, laser.y, laser.width, laser.height);
+                }
+
+                // Invader Bullets
+                this.ctx.fillStyle = '#ff007f';
+                for (const b of this.invaderBullets) {
+                    this.ctx.fillRect(b.x, b.y, b.width, b.height);
+                }
+
+                // Pause State Text
+                if (this.gameState === 'PAUSED') {
+                    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                    this.ctx.fillRect(0, 0, this.width, this.height);
+                    this.ctx.fillStyle = '#ffee00';
+                    this.ctx.font = '20px "Press Start 2P"';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('GAME PAUSED', this.width / 2, this.height / 2);
+                    this.ctx.font = '10px "Press Start 2P"';
+                    this.ctx.fillText('PRESS [P] TO RESUME', this.width / 2, this.height / 2 + 30);
+                }
+            }
+
+            render8BitInvader(inv) {
+                this.ctx.fillStyle = inv.type === 2 ? '#ff007f' : (inv.type === 1 ? '#00e5ff' : '#00ff66');
+                const x = inv.x;
+                const y = inv.y;
+                const frame = this.invaderAnimFrame;
+
+                if (inv.type === 2) {
+                    this.ctx.fillRect(x + 9, y, 8, 3);
+                    this.ctx.fillRect(x + 6, y + 3, 14, 3);
+                    this.ctx.fillRect(x + 3, y + 6, 20, 4);
+                    this.ctx.fillRect(x + 6, y + 10, 4, 4);
+                    this.ctx.fillRect(x + 16, y + 10, 4, 4);
+                    if (frame === 0) {
+                        this.ctx.fillRect(x, y + 14, 5, 4);
+                        this.ctx.fillRect(x + 21, y + 14, 5, 4);
+                    } else {
+                        this.ctx.fillRect(x + 9, y + 14, 8, 4);
+                    }
+                } else if (inv.type === 1) {
+                    this.ctx.fillRect(x + 6, y, 14, 3);
+                    this.ctx.fillRect(x + 3, y + 3, 20, 3);
+                    this.ctx.fillRect(x + 3, y + 6, 20, 4);
+                    this.ctx.fillRect(x + 9, y + 10, 8, 3);
+                    if (frame === 0) {
+                        this.ctx.fillRect(x, y + 6, 3, 8);
+                        this.ctx.fillRect(x + 23, y + 6, 3, 8);
+                        this.ctx.fillRect(x + 3, y + 13, 4, 4);
+                        this.ctx.fillRect(x + 19, y + 13, 4, 4);
+                    } else {
+                        this.ctx.fillRect(x + 3, y, 3, 4);
+                        this.ctx.fillRect(x + 20, y, 3, 4);
+                        this.ctx.fillRect(x, y + 13, 6, 4);
+                        this.ctx.fillRect(x + 20, y + 13, 6, 4);
+                    }
+                } else {
+                    this.ctx.fillRect(x + 6, y, 14, 3);
+                    this.ctx.fillRect(x + 3, y + 3, 20, 4);
+                    this.ctx.fillRect(x + 3, y + 7, 20, 4);
+                    this.ctx.fillRect(x + 6, y + 11, 14, 3);
+                    if (frame === 0) {
+                        this.ctx.fillRect(x, y + 14, 6, 4);
+                        this.ctx.fillRect(x + 20, y + 14, 6, 4);
+                    } else {
+                        this.ctx.fillRect(x + 6, y + 14, 4, 4);
+                        this.ctx.fillRect(x + 16, y + 14, 4, 4);
+                    }
+                }
+            }
+
+            renderStartScreen() {
+                this.ctx.textAlign = 'center';
+                this.ctx.fillStyle = '#00ff66';
+                this.ctx.font = '24px "Press Start 2P"';
+                this.ctx.fillText('KERR-I-CADE', this.width / 2, 130);
+
+                this.ctx.fillStyle = '#ffee00';
+                this.ctx.font = '14px "Press Start 2P"';
+                this.ctx.fillText('SPACE INVADERS 8-BIT', this.width / 2, 175);
+
+                this.ctx.font = '10px "Press Start 2P"';
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.fillText('* SCORE TABLE *', this.width / 2, 235);
+
+                this.ctx.fillStyle = '#ff007f';
+                this.ctx.fillRect(this.width / 2 - 80, 260, 24, 10);
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.fillText('= MYSTERY (50-300 PTS)', this.width / 2 + 35, 270);
+
+                this.ctx.fillStyle = '#ff007f';
+                this.ctx.fillRect(this.width / 2 - 76, 290, 16, 12);
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.fillText('= 30 POINTS', this.width / 2, 300);
+
+                this.ctx.fillStyle = '#00e5ff';
+                this.ctx.fillRect(this.width / 2 - 76, 320, 16, 12);
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.fillText('= 20 POINTS', this.width / 2, 330);
+
+                this.ctx.fillStyle = '#00ff66';
+                this.ctx.fillRect(this.width / 2 - 76, 350, 16, 12);
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.fillText('= 10 POINTS', this.width / 2, 360);
+
+                if (Math.floor(Date.now() / 500) % 2 === 0) {
+                    this.ctx.fillStyle = '#00e5ff';
+                    this.ctx.font = '14px "Press Start 2P"';
+                    this.ctx.fillText('PRESS START / CLICK TO PLAY', this.width / 2, 445);
+                }
+
+                this.ctx.fillStyle = '#888888';
+                this.ctx.font = '9px "Press Start 2P"';
+                this.ctx.fillText('REWARD SYSTEM: 300 POINTS = 3 MINS PLAYTIME', this.width / 2, 495);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            new KerrICade();
+        });
+    </script>
+</body>
+</html>

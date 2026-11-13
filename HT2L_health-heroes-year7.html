@@ -115,7 +115,9 @@ button:disabled{background:#2a3a50;color:#6a82a0;cursor:not-allowed;box-shadow:n
      <div class="stat">🏅 Missions: <span id="completed">0/6</span></div>
      <div class="stat">📈 Progress: <span id="percent">0%</span></div>
    </div>
-   <div class="progress"><div id="progressBar"></div></div>
+   <div class="progress"><div id="progressBar"></div>
+   <div id="kerracade-reward-zone"></div>
+   </div>
    
    <div id="mainCertContainer" style="display:none; text-align:center; width:100%; margin-top:20px;">
       <button class="answer correct" onclick="openCertModal()" style="font-size:1.2rem; padding:16px 24px; box-shadow: 0 4px 15px rgba(91,214,154,0.3); border:2px solid var(--good); width:100%;">🏆 All Missions Complete! Open Certificate</button>
@@ -343,6 +345,7 @@ function renderQuiz(qs, key, stateKey){
 
 // Certificate / Notebook Export Logic
 function openCertModal() {
+ 
     $('certModal').classList.add('show');
     updateNotebookText();
 }
@@ -426,6 +429,11 @@ window.copyNotebook = function() {
         $("copyMsg").style.display = "inline";
         setTimeout(() => $("copyMsg").style.display = "none", 3000);
     });
+ 
+    let finalScore = correctCount; // Grab this from your existing Health Heroes grading variables
+    let secondsPerPoint = 18; 
+    // Generate the URL and start the 5 minute countdown
+    KerracadeReward.grantReward(finalScore, secondsPerPoint, 'kerracade-reward-zone');
 }
 
 function renderVaccines(){
@@ -605,6 +613,12 @@ window.dragLeave = (ev) => {
     let bin = ev.target.closest('.sort-bin');
     if(bin && ev.target === bin) bin.classList.remove('drag-over');
 };
+window.onload = () => {
+    // Other setup logic...
+    
+    // Check if there is an active timer to restore
+    KerracadeReward.init('kerracade-reward-zone');
+};
 window.drop = (ev) => {
     ev.preventDefault();
     document.querySelectorAll('.sort-bin').forEach(bin => bin.classList.remove('drag-over'));
@@ -733,4 +747,5 @@ $('resetBtn').onclick=()=>{if(confirm('Reset all Health Heroes scores and missio
 
 updateStats();
 </script>
+ <script src="kerracade_reward.js"></script>
 </body></html>
